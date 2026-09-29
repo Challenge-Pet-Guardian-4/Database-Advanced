@@ -1,0 +1,52 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="CC1C85C7-7732-871A-8E09-F6BE0CC30F23" name="status">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-14 18:04:03 UTC</createdTime>
+<ownerDesignName>datamodeler</ownerDesignName>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id_status" id="733F42C1-9D56-CB00-FC7C-1BBFED52BFB5">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-14 18:04:12 UTC</createdTime>
+<ownerDesignName>datamodeler</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="nome_status" id="EAFE075E-F6EB-EDF6-82D2-8E53DB9C60AD">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-14 18:04:23 UTC</createdTime>
+<ownerDesignName>datamodeler</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15</dataTypeSize>
+<listOfValues>
+<valueDef value="CONCLUIDO" description=""/>
+<valueDef value="EXPIRADO" description=""/>
+<valueDef value="PENDENTE" description=""/>
+</listOfValues>
+<ownDataTypeParameters>15,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="DA46FCC6-C6FA-17AF-1FB8-4792222080C8" name="status PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-14 18:04:21 UTC</createdTime>
+<ownerDesignName>datamodeler</ownerDesignName>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>733F42C1-9D56-CB00-FC7C-1BBFED52BFB5</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

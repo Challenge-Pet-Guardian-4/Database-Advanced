@@ -1,0 +1,55 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="70A64BD5-AC1C-F540-4817-5FAEFCEC19A7" name="status">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-07 20:10:26 UTC</createdTime>
+<generatorID>CC1C85C7-7732-871A-8E09-F6BE0CC30F23</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id_status" id="454AACED-002F-9F17-3351-C8B7B56782FD">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-07 20:10:26 UTC</createdTime>
+<generatorID>733F42C1-9D56-CB00-FC7C-1BBFED52BFB5</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="nome_status" id="A58805FA-76FD-FAF9-9746-B22BCEE6CE6D">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-07 20:10:26 UTC</createdTime>
+<generatorID>EAFE075E-F6EB-EDF6-82D2-8E53DB9C60AD</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>15</dataTypeSize>
+<listOfValues>
+<valueDef value="CONCLUIDO" description=""/>
+<valueDef value="EXPIRADO" description=""/>
+<valueDef value="PENDENTE" description=""/>
+</listOfValues>
+<ownDataTypeParameters>15,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="F85AF370-C4A3-13D5-AA19-82507122D8D3" name="status_PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-07 20:10:26 UTC</createdTime>
+<generatorID>DA46FCC6-C6FA-17AF-1FB8-4792222080C8</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="454AACED-002F-9F17-3351-C8B7B56782FD"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

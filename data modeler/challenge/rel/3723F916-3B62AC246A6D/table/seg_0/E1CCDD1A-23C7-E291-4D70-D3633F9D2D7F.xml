@@ -1,0 +1,81 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="E1CCDD1A-23C7-E291-4D70-D3633F9D2D7F" name="usuario_endereco">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>2394FE48-AE1F-3063-64E4-27D2F4AFCD15</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="usuario_id_usuario" id="370A94C1-27BC-CB30-F9AB-2781D261DAFE">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>5C46C1C7-3C87-7F2E-1697-5CA09D701597</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="32400D54-D79C-03F5-19B8-55DAAF2A93B6" referredColumn="DD589BDB-E42F-0AE0-15DD-E3D427BA5DE1"/>
+</associations>
+</Column>
+<Column name="endereco_id_endereco" id="630BF1F9-BD50-3AC5-21B0-86499E84172D">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>0E2F9739-883F-C9EF-C88A-E32E1826BF47</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="04B5CBFB-B789-8735-F11E-F3CC62F453DC" referredColumn="29A646DB-EE69-72C3-E2F4-AB7CC61AB9B9"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="CBFE328F-6F0F-EA0D-965A-A7B543009BB2" name="usuario_endereco_PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>B6D6476A-5A3A-786E-22C7-E620B1E620C7</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="370A94C1-27BC-CB30-F9AB-2781D261DAFE"/>
+<colUsage columnID="630BF1F9-BD50-3AC5-21B0-86499E84172D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="2A7E3D6A-7046-5F9C-C9B4-5762CACEE924" name="usuario_endereco_usuario_FK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>145A8CCE-94A4-A6E0-739D-1014BE93755A</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="370A94C1-27BC-CB30-F9AB-2781D261DAFE"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="08029856-FC78-2811-1672-C231DEDDB328" name="usuario_endereco_endereco_FK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:15:00 UTC</createdTime>
+<generatorID>0D620E1B-684A-F136-D38C-D6F62339D2C1</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="630BF1F9-BD50-3AC5-21B0-86499E84172D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

@@ -1,0 +1,131 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="561C45D3-EB36-3BBD-55F3-3E77F3DF7BF1" name="usuario">
+<createdBy>lulz_user</createdBy>
+<createdTime>2026-05-05 20:49:34 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id_usuario" id="06CB55AC-72C0-906B-C777-AA2E0DCAA90F">
+<createdBy>lulz_user</createdBy>
+<createdTime>2026-05-05 20:50:27 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="nome" id="EE5EC0D1-52C6-895C-996C-B344BC22676C">
+<createdBy>lulz_user</createdBy>
+<createdTime>2026-05-05 20:51:03 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>100</dataTypeSize>
+<ownDataTypeParameters>100,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="email" id="28AC41DB-4AA0-CBD2-73A3-7729A6F12ACE">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-10 02:06:25 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50</dataTypeSize>
+<ownDataTypeParameters>50,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="senha" id="FA5AEBBD-AC1D-D9BE-6DF1-E342F8E57BE1">
+<createdBy>lulz_user</createdBy>
+<createdTime>2026-05-05 20:51:17 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>60</dataTypeSize>
+<ownDataTypeParameters>60,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="role" id="E00E9248-4E4E-1C09-45C0-52A20659E5A8">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 16:14:05 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>10</dataTypeSize>
+<listOfValues>
+<valueDef value="ADMIN" description=""/>
+<valueDef value="COMUM" description=""/>
+<valueDef value="PREMIUM" description=""/>
+</listOfValues>
+<ownDataTypeParameters>10,,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="id_telefone" id="CFCCA036-3368-057D-13E4-A5E4F284F441">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-05-14 16:51:25 UTC</createdTime>
+<generatorID>27EB7224-58A2-CD90-A7C4-2969E91E3195</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<referedAttribute>004AC3E6-9863-9E96-0F2F-5969E31E9D07</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="07BC289B-E856-9BE0-F91F-11B9DE3EEC6C" name="usuario PK">
+<createdBy>lulz_user</createdBy>
+<createdTime>2026-05-05 20:50:54 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<newElementsIDs>06CB55AC-72C0-906B-C777-AA2E0DCAA90F</newElementsIDs>
+<usedAttributes>
+<attributeRef>06CB55AC-72C0-906B-C777-AA2E0DCAA90F</attributeRef>
+</usedAttributes>
+</identifier>
+<identifier id="799C4369-C32B-A48E-F92D-672CB3527072" name="email">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-29 14:59:37 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+</engineerTo>
+<newElementsIDs>28AC41DB-4AA0-CBD2-73A3-7729A6F12ACE</newElementsIDs>
+<usedAttributes>
+<attributeRef>28AC41DB-4AA0-CBD2-73A3-7729A6F12ACE</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>

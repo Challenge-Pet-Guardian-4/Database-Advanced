@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="07B1A8AB-59CA-3E20-EF43-338849268263" name="historico">
+  <createdBy>Enzo</createdBy>
+  <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+  <generatorID>22E68A94-190A-647C-2BC5-12AA07115BAB</generatorID>
+  <ownerDesignName>challenge</ownerDesignName>
+  <allowColumnReorder>false</allowColumnReorder>
+  <existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+  <parsed>true</parsed>
+  <columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+    <Column name="id_hist" id="460A3E73-C8D3-692E-5C92-61647E5F7A57">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>A8FC375C-4560-3828-FF34-5C683539CAEC</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <useDomainConstraints>false</useDomainConstraints>
+      <use>1</use>
+      <logicalDatatype>LOGDT019</logicalDatatype>
+      <dataTypePrecision>5</dataTypePrecision>
+      <ownDataTypeParameters>,5,</ownDataTypeParameters>
+      <autoIncrementCycle>false</autoIncrementCycle>
+    </Column>
+    <Column name="ult_vacin" id="DCD3E9DF-D3AA-C6BB-0EBF-446C09848EAD">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>94D6004F-16DF-9F8F-7EA1-4366992E61CD</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <useDomainConstraints>false</useDomainConstraints>
+      <use>1</use>
+      <logicalDatatype>LOGDT008</logicalDatatype>
+      <ownDataTypeParameters>,,</ownDataTypeParameters>
+      <autoIncrementCycle>false</autoIncrementCycle>
+    </Column>
+    <Column name="ult_consult" id="0FA3C020-B97E-4778-FE19-413CDBEF3DBB">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>5D7D5F7D-184E-AAB7-AFBF-445A445AFE69</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <useDomainConstraints>false</useDomainConstraints>
+      <use>1</use>
+      <logicalDatatype>LOGDT008</logicalDatatype>
+      <ownDataTypeParameters>,,</ownDataTypeParameters>
+      <autoIncrementCycle>false</autoIncrementCycle>
+    </Column>
+    <Column name="ult_exam" id="8E1EFD46-73C1-3D5B-3B4B-CB3284C1C39F">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>9C4CEC09-2733-36AF-48F5-F7BDCB9B5311</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <useDomainConstraints>false</useDomainConstraints>
+      <use>1</use>
+      <logicalDatatype>LOGDT008</logicalDatatype>
+      <ownDataTypeParameters>,,</ownDataTypeParameters>
+      <autoIncrementCycle>false</autoIncrementCycle>
+    </Column>
+    <Column name="pet_id_pet" id="BC5632A2-6B0F-2B83-10EB-3C7764B0C370">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>44206B9A-A8F2-E3BA-1D6C-C1D39409F52D</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <useDomainConstraints>false</useDomainConstraints>
+      <use>1</use>
+      <logicalDatatype>LOGDT019</logicalDatatype>
+      <dataTypePrecision>3</dataTypePrecision>
+      <ownDataTypeParameters>,,</ownDataTypeParameters>
+      <previousColumn>false</previousColumn>
+      <autoIncrementCycle>false</autoIncrementCycle>
+      <associations>
+        <colAssociation fkAssociation="2DF38C6B-F2B5-915E-5C73-DDA38E667371" referredColumn="2AFDDBE8-DC94-D0D5-6C42-78A5EAAA6406" />
+      </associations>
+    </Column>
+  </columns>
+  <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+    <ind_PK_UK id="8D984B74-2B85-1ABE-5B65-29F4048751AC" name="historico_PK">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>8A112F7A-2887-E021-1E8D-ADC3AFCE1C94</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <pk>true</pk>
+      <indexState>Primary Constraint</indexState>
+      <isSurrogateKey>false</isSurrogateKey>
+      <indexColumnUsage>
+        <colUsage columnID="460A3E73-C8D3-692E-5C92-61647E5F7A57" />
+      </indexColumnUsage>
+    </ind_PK_UK>
+    <ind_PK_UK id="A8039634-B95D-837A-4104-C4381E9C4CFF" name="historico__IDX">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <ownerDesignName>challenge</ownerDesignName>
+      <indexState>Unique Plain Index</indexState>
+      <isSurrogateKey>false</isSurrogateKey>
+      <relationGeneratorID>1795C799-5885-82DD-4FF7-5600B8C0835C</relationGeneratorID>
+      <indexColumnUsage>
+        <colUsage columnID="BC5632A2-6B0F-2B83-10EB-3C7764B0C370" />
+        <colUsage columnID="F7515A9E-04F5-BCEB-34DE-2810EE54D989" />
+      </indexColumnUsage>
+    </ind_PK_UK>
+    <ind_PK_UK id="8E5771A3-D961-F4AE-1AA7-FBC5BBD5B54A" name="historico_pet_FK">
+      <createdBy>Enzo</createdBy>
+      <createdTime>2026-08-24 22:13:34 UTC</createdTime>
+      <generatorID>1795C799-5885-82DD-4FF7-5600B8C0835C</generatorID>
+      <ownerDesignName>challenge</ownerDesignName>
+      <indexState>Foreign Key</indexState>
+      <isSurrogateKey>false</isSurrogateKey>
+      <indexColumnUsage>
+        <colUsage columnID="BC5632A2-6B0F-2B83-10EB-3C7764B0C370" />
+        <colUsage columnID="F7515A9E-04F5-BCEB-34DE-2810EE54D989" />
+      </indexColumnUsage>
+    </ind_PK_UK>
+  </indexes>
+</Table>

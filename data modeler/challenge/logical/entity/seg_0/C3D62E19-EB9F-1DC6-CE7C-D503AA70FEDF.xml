@@ -1,0 +1,59 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="C3D62E19-EB9F-1DC6-CE7C-D503AA70FEDF" name="raca">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-27 18:23:10 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="79779239-359F-5F8B-381B-C43BB1AC853E" value="true"/>
+</engineerTo>
+<adequatelyNormalized>NO</adequatelyNormalized>
+<expectedVolumes>0</expectedVolumes>
+<fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
+<growthPercent>0</growthPercent>
+<growthType>Year</growthType>
+<maxVolumes>9999999</maxVolumes>
+<minVolumes>0</minVolumes>
+<normalForm>Third</normalForm>
+<attributes itemClass="oracle.dbtools.crest.model.design.logical.Attribute">
+<Attribute name="id_raca" id="10ED44A3-C847-AAEB-0F81-88DB983057F2">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-27 18:23:14 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="79779239-359F-5F8B-381B-C43BB1AC853E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
+</Attribute>
+<Attribute name="nome_raca" id="C938A7E8-5094-1A0E-6936-302E54C460DB">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-27 18:23:24 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="79779239-359F-5F8B-381B-C43BB1AC853E" value="true"/>
+</engineerTo>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>30</dataTypeSize>
+<ownDataTypeParameters>30,,</ownDataTypeParameters>
+</Attribute>
+</attributes>
+<identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
+<identifier id="EF022EB6-752B-AA0D-C6BE-1C91876FFCF6" name="raca PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-08-27 18:23:23 UTC</createdTime>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="79779239-359F-5F8B-381B-C43BB1AC853E" value="true"/>
+</engineerTo>
+<pk>true</pk>
+<usedAttributes>
+<attributeRef>10ED44A3-C847-AAEB-0F81-88DB983057F2</attributeRef>
+</usedAttributes>
+</identifier>
+</identifiers>
+</Entity>
