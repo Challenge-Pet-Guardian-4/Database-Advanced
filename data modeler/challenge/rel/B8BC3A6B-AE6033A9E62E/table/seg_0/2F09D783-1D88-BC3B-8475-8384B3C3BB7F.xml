@@ -1,0 +1,136 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="2F09D783-1D88-BC3B-8475-8384B3C3BB7F" name="aula">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>81D5D3D1-0C64-968F-2369-010D8B7F2272</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id_aula" id="09A128FB-1DAA-BFDB-04A1-6469C47B2E18">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>ED18EE67-AD07-2768-DB9A-E16AA8F3FB01</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>5</dataTypePrecision>
+<ownDataTypeParameters>,5,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="nome" id="ECAF8663-04F6-1925-37FE-C841F42E5935">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>5ECA03B3-1F6F-98D0-FDD2-19389C66EADA</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>50</dataTypeSize>
+<ownDataTypeParameters>50,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="descricao" id="C8B2288E-E2A9-6EB8-A751-C9C147B9D320">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>CCF7FC05-3005-27A8-8374-E12509A0E92E</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>100</dataTypeSize>
+<ownDataTypeParameters>100,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="pontos_aula" id="5A73590A-AD6B-9BBB-A6E9-F2CA0BC78DD7">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>74E9ABB1-F0AC-87C6-EC56-B3A9F708790D</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>5</dataTypePrecision>
+<ownDataTypeParameters>,5,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="dificuldade" id="3808C69F-E40D-E104-7ABF-9CC4D7FF58AE">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>7B57BA2C-246A-7B46-5C92-2804B0E6709C</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20</dataTypeSize>
+<ownDataTypeParameters>20,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="conteudo" id="034A8F2F-8BCA-AAC3-B07B-C4EA5D20CF83">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>B0D5BE28-E919-7DBE-51E6-667C446476EA</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>1000</dataTypeSize>
+<ownDataTypeParameters>1000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="concluida" id="3A027070-6303-CE47-8E86-DCD79BE417DD">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>E0EB22C1-641E-EFA1-2D17-97347FE2343E</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT006</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="modulo_id_modulo" id="6031F974-A787-2865-B30E-D1A8354B6805">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>47598FD7-9CDE-9BB4-FB06-DFD17F7643A9</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>5</dataTypePrecision>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="D2CF1312-8F7B-E6F1-F3E0-F1244908FCB8" referredColumn="A2700D56-8B77-A55A-9145-DF5064302E7D"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="E50F7CA2-1CB1-330F-6D4A-AEC026C5C109" name="aula_PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>C7BC797B-1930-848B-B7E9-1645FDE49874</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="09A128FB-1DAA-BFDB-04A1-6469C47B2E18"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="DCD810D6-010E-A7DD-25C4-C8F3E95B8D69" name="aula_modulo_FK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>6BA118F3-A824-2858-4924-7E2E7C013A36</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="6031F974-A787-2865-B30E-D1A8354B6805"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

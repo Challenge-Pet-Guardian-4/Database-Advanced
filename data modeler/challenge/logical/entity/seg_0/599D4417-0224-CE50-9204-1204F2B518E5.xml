@@ -4,7 +4,7 @@
 <createdTime>2026-05-14 13:57:53 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="9015D6EA-A3E4-0B6A-37FC-9617EB08B481" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
@@ -21,14 +21,14 @@
 <generatorID>56E21A7B-51EC-AD9A-92EB-D1AB3C4F2094</generatorID>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="9015D6EA-A3E4-0B6A-37FC-9617EB08B481" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <referedAttribute>06CB55AC-72C0-906B-C777-AA2E0DCAA90F</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
 <dataTypePrecision>3</dataTypePrecision>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
 </Attribute>
 <Attribute name="id_pet" id="CCBE7325-3FFD-E1D2-8A77-EEABB3E65B3E">
 <createdBy>Enzo</createdBy>
@@ -36,7 +36,7 @@
 <generatorID>52538248-6169-63F5-3D64-40D3901029FB</generatorID>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="9015D6EA-A3E4-0B6A-37FC-9617EB08B481" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <referedAttribute>6AAB1D2F-33F4-43DD-62EE-5683C1379D2D</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
@@ -50,7 +50,7 @@
 <createdTime>2026-05-14 13:59:23 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="9015D6EA-A3E4-0B6A-37FC-9617EB08B481" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -64,7 +64,7 @@
 <createdTime>2026-05-14 13:58:47 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="9015D6EA-A3E4-0B6A-37FC-9617EB08B481" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>

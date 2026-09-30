@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="2594D197-A1B3-1ED6-4D40-1CED5DA0A90E" containerWithKeyObject="49CD8A06-A79B-0B23-A222-EC9B65DECF3F" localFKIndex="3ECFD748-389B-7263-114D-D452EBE9C866" name="modulo_trilha_FK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:51:24 UTC</createdTime>
+<generatorID>88186376-E017-FBC7-2C01-DD9623B3C808</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<referredTableLongName>trilha</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>F908A927-A7EC-8BAB-A097-D1749C0A6C41</referredTableID>
+<keyObject>EA00DF8E-F47B-1DC0-CA9C-498133226C72</keyObject>
+<referredKeyID>EA00DF8E-F47B-1DC0-CA9C-498133226C72</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>id_trilha</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

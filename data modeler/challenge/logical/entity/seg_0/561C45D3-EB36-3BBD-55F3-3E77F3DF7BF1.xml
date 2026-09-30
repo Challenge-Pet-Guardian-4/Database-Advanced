@@ -4,7 +4,7 @@
 <createdTime>2026-05-05 20:49:34 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
@@ -20,7 +20,7 @@
 <createdTime>2026-05-05 20:50:27 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -33,7 +33,7 @@
 <createdTime>2026-05-05 20:51:03 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -46,7 +46,7 @@
 <createdTime>2026-05-10 02:06:25 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -59,7 +59,7 @@
 <createdTime>2026-05-05 20:51:17 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -72,7 +72,7 @@
 <createdTime>2026-08-29 16:14:05 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -91,7 +91,7 @@
 <generatorID>27EB7224-58A2-CD90-A7C4-2969E91E3195</generatorID>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <referedAttribute>004AC3E6-9863-9E96-0F2F-5969E31E9D07</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
@@ -100,6 +100,21 @@
 <dataTypePrecision>3</dataTypePrecision>
 <ownDataTypeParameters>,3,</ownDataTypeParameters>
 </Attribute>
+<Attribute name="id_endereco" id="B1876125-3E95-A882-B4C0-1B368BDE8E2B">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-09-30 16:15:50 UTC</createdTime>
+<generatorID>79E3AEA8-C85F-6E66-41A1-36E01F270F72</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
+</engineerTo>
+<referedAttribute>8D0D09AC-9460-ABE1-1E50-9FE7F521CBF8</referedAttribute>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+</Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
 <identifier id="07BC289B-E856-9BE0-F91F-11B9DE3EEC6C" name="usuario PK">
@@ -107,10 +122,10 @@
 <createdTime>2026-05-05 20:50:54 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <pk>true</pk>
-<newElementsIDs>06CB55AC-72C0-906B-C777-AA2E0DCAA90F</newElementsIDs>
+<newElementsIDs>06CB55AC-72C0-906B-C777-AA2E0DCAA90F,79E3AEA8-C85F-6E66-41A1-36E01F270F72</newElementsIDs>
 <usedAttributes>
 <attributeRef>06CB55AC-72C0-906B-C777-AA2E0DCAA90F</attributeRef>
 </usedAttributes>
@@ -120,7 +135,7 @@
 <createdTime>2026-08-29 14:59:37 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="ADAAC5AB-D627-3200-BB44-ED8B537D572E" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <newElementsIDs>28AC41DB-4AA0-CBD2-73A3-7729A6F12ACE</newElementsIDs>
 <usedAttributes>
