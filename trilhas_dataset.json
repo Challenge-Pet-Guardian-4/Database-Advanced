@@ -1,0 +1,108 @@
+[
+  {
+    "trilha_id_origem": 1,
+    "nome": "Socialização Básica de Filhotes",
+    "descricao": "Trilha prática para condicionamento de filhotes e convivência harmoniosa em família",
+    "categoria": "COMPORTAMENTO",
+    "pet_alvo": {
+      "pet_id": 1,
+      "nome": "Thor",
+      "porte": "MEDIO"
+    },
+    "modulos": [
+      {
+        "modulo_id": 1,
+        "titulo": "Primeiros Passos e Comandos Básicos",
+        "tempo_estimado": "45 min",
+        "descricao": "Introdução aos comandos essenciais de obediência e vínculo com o tutor",
+        "aulas": [
+          {
+            "aula_id": 1,
+            "titulo": "Comando Sentar com Recompensa",
+            "descricao": "Técnica de indução positiva utilizando petisco de alto valor",
+            "pontos_aula": 20,
+            "dificuldade": "INICIANTE",
+            "concluida": true,
+            "conteudo": "Segure o petisco próximo ao focinho do pet e mova-o suavemente para trás da cabeça. Quando a parte traseira tocar o chão, diga 'Senta', elogie com entusiasmo e entregue o petisco."
+          },
+          {
+            "aula_id": 2,
+            "titulo": "Foco no Olhar e Chamado pelo Nome",
+            "descricao": "Exercício de atenção para ambientes com muitas distrações",
+            "pontos_aula": 25,
+            "dificuldade": "INICIANTE",
+            "concluida": true,
+            "conteudo": "Chame o nome do pet em tom alegre. Assim que ele fizer contato visual direto, marque o comportamento com 'Muito bem!' e recompense imediatamente."
+          }
+        ]
+      },
+      {
+        "modulo_id": 2,
+        "titulo": "Passeio Tranquilo sem Puxar a Guia",
+        "tempo_estimado": "60 min",
+        "descricao": "Como acostumar o cão à guia e coleira sem estresse ou tensão",
+        "aulas": [
+          {
+            "aula_id": 3,
+            "titulo": "Apresentação Positiva da Guia",
+            "descricao": "Associação da guia e peitoral com momentos prazerosos em casa",
+            "pontos_aula": 30,
+            "dificuldade": "INTERMEDIARIO",
+            "concluida": false,
+            "conteudo": "Coloque o peitoral no pet dentro de casa por 10 minutos antes da refeição, criando associação imediata com coisas boas."
+          },
+          {
+            "aula_id": 4,
+            "titulo": "Técnica da Árvore (Parar ao Puxar)",
+            "descricao": "Ensinar o cão que puxar a guia interrompe o passeio",
+            "pontos_aula": 35,
+            "dificuldade": "INTERMEDIARIO",
+            "concluida": false,
+            "conteudo": "Sempre que o pet tensionar a guia durante o passeio, pare imediatamente e permaneça imóvel como uma árvore. Só retome o passo quando a guia afrouxar."
+          }
+        ]
+      }
+    ],
+    "criado_em": "2026-10-01T20:00:00Z"
+  },
+  {
+    "trilha_id_origem": 2,
+    "nome": "Enriquecimento Ambiental para Felinos",
+    "descricao": "Rotina de estímulos sensoriais, cognitivos e físicos para gatos de apartamento",
+    "categoria": "BEM_ESTAR_FELINO",
+    "pet_alvo": {
+      "pet_id": 2,
+      "nome": "Mel",
+      "porte": "PEQUENO"
+    },
+    "modulos": [
+      {
+        "modulo_id": 3,
+        "titulo": "Verticalização e Território Seguro",
+        "tempo_estimado": "30 min",
+        "descricao": "Otimização de prateleiras, arranhadores e nichos suspensos",
+        "aulas": [
+          {
+            "aula_id": 5,
+            "titulo": "Instalação da Rota de Fuga Vertical",
+            "descricao": "Criação de rotas aéreas para descanso e sensação de segurança",
+            "pontos_aula": 25,
+            "dificuldade": "INICIANTE",
+            "concluida": true,
+            "conteudo": "Posicione nichos a pelo menos 1,5 metro de altura próximos a janelas teladas, permitindo a observação segura do ambiente externo."
+          },
+          {
+            "aula_id": 6,
+            "titulo": "Estímulo Olfativo com Catnip e Silvervine",
+            "descricao": "Como alternar ervas relaxantes para evitar tédio e estresse",
+            "pontos_aula": 20,
+            "dificuldade": "INICIANTE",
+            "concluida": false,
+            "conteudo": "Ofereça brinquedos com catnip em dias alternados por 15 minutos para manter o interesse olfativo ativo sem saturação de receptores."
+          }
+        ]
+      }
+    ],
+    "criado_em": "2026-10-01T20:30:00Z"
+  }
+]
