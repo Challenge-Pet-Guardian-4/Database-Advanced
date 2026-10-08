@@ -68,18 +68,6 @@
 <ownDataTypeParameters>20,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="conteudo" id="6410DAFF-3EB8-5EAA-C80F-8164F4837B78">
-<createdBy>Enzo</createdBy>
-<createdTime>2026-09-30 16:54:25 UTC</createdTime>
-<generatorID>B0D5BE28-E919-7DBE-51E6-667C446476EA</generatorID>
-<ownerDesignName>challenge</ownerDesignName>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>1000</dataTypeSize>
-<ownDataTypeParameters>1000,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="concluida" id="71FE0E9E-243B-03F0-FE79-42999F6784BD">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-09-30 16:54:25 UTC</createdTime>

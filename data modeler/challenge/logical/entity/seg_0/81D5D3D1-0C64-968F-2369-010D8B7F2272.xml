@@ -4,7 +4,7 @@
 <createdTime>2026-08-23 19:19:28 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
@@ -20,7 +20,7 @@
 <createdTime>2026-08-23 19:19:40 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -33,7 +33,7 @@
 <createdTime>2026-08-23 19:19:52 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -46,7 +46,7 @@
 <createdTime>2026-08-23 19:20:02 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -59,7 +59,7 @@
 <createdTime>2026-08-23 19:21:04 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -72,7 +72,7 @@
 <createdTime>2026-08-23 19:24:11 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -80,25 +80,12 @@
 <dataTypeSize>20</dataTypeSize>
 <ownDataTypeParameters>20,,</ownDataTypeParameters>
 </Attribute>
-<Attribute name="conteudo" id="B0D5BE28-E919-7DBE-51E6-667C446476EA">
-<createdBy>Enzo</createdBy>
-<createdTime>2026-08-29 00:45:17 UTC</createdTime>
-<ownerDesignName>challenge</ownerDesignName>
-<engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
-</engineerTo>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>1000</dataTypeSize>
-<ownDataTypeParameters>1000,,</ownDataTypeParameters>
-</Attribute>
 <Attribute name="concluida" id="E0EB22C1-641E-EFA1-2D17-97347FE2343E">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-08-29 14:50:24 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -111,7 +98,7 @@
 <generatorID>6BA118F3-A824-2858-4924-7E2E7C013A36</generatorID>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <referedAttribute>FAA6561A-81FB-6019-6B97-3768DDCEEBD2</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
@@ -127,7 +114,7 @@
 <createdTime>2026-08-23 19:19:47 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
 <engineerTo>
-<item key="5AEC283D-3CB8-5B50-7573-6EA3D515760A" value="true"/>
+<item key="47506797-72E7-062C-167C-A173F85C2779" value="true"/>
 </engineerTo>
 <pk>true</pk>
 <usedAttributes>
