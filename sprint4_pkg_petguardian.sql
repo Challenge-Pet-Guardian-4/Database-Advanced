@@ -2,6 +2,7 @@
 -- CHALLENGE CLYVO 2026 — SPRINT 4
 -- DISCIPLINA: Mastering Relational and Non-Relational Database
 -- REQUISITO 2: Empacotamento dos Processos (Packages) no Oracle PL/SQL
+-- FOCO: Pontuação Gamificada de Pets, Governança do Care Circle e Transações
 -- TURMA: 2TDSPG
 -- INTEGRANTES:
 --   1. Enzo Okuizumi        - RM: 561432
@@ -15,364 +16,300 @@ SET SERVEROUTPUT ON SIZE UNLIMITED;
 
 -- ====================================================================
 -- PARTE 1: ESPECIFICAÇÃO DO PACOTE (PACKAGE SPECIFICATION)
--- Declaração das assinaturas públicas, tipos e exceções
 -- ====================================================================
 CREATE OR REPLACE PACKAGE pkg_petguardian AS
 
-    -- Exceções públicas do pacote com códigos ORA padronizados
+    -- Exceções públicas com códigos ORA padronizados
     e_id_invalido            EXCEPTION;
-    e_dados_incompletos      EXCEPTION;
-    e_json_excedente         EXCEPTION;
-    e_status_inexistente     EXCEPTION;
-    e_sem_registros          EXCEPTION;
+    e_pet_inexistente        EXCEPTION;
+    e_usuario_inexistente    EXCEPTION;
+    e_vinculo_inexistente    EXCEPTION;
+    e_tarefa_inexistente     EXCEPTION;
+    e_aula_inexistente       EXCEPTION;
+    e_tarefa_nao_pendente    EXCEPTION;
     e_pontos_invalido        EXCEPTION;
-    e_sem_fatos_cadastrados  EXCEPTION;
 
-    -- Função 1: Serialização manual de tarefa individual em JSON
-    FUNCTION fn_tarefa_json (
-        p_id_tarefa     IN NUMBER,
-        p_titulo        IN VARCHAR2,
-        p_pontos        IN NUMBER,
-        p_descricao     IN VARCHAR2,
-        p_nome_pet      IN VARCHAR2,
-        p_nome_status   IN VARCHAR2,
-        p_nome_usuario  IN VARCHAR2
-    ) RETURN VARCHAR2;
+    -- ----------------------------------------------------------------
+    -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS (APP & JAVA)
+    -- ----------------------------------------------------------------
 
-    -- Procedimento 1: Lista tarefas no console via DBMS_OUTPUT
-    PROCEDURE pr_listar_tarefas_json (
-        p_status_id IN NUMBER DEFAULT NULL
+    -- 1.1 Cálculo consolidado de pontuação do pet individual (tarefas + aulas)
+    PROCEDURE pr_calcular_pontuacao_pet (
+        p_id_pet         IN NUMBER,
+        p_pontos_tarefas OUT NUMBER,
+        p_pontos_aulas   OUT NUMBER,
+        p_pontos_totais  OUT NUMBER
     );
 
-    -- Procedimento 1 (Extensão): Retorna JSON de tarefas via parâmetro OUT CLOB para consumo Java
-    PROCEDURE pr_exportar_tarefas_json (
-        p_status_id    IN NUMBER DEFAULT NULL,
-        p_json_output  OUT CLOB
+    -- 1.2 Cálculo agregado de todos os pets do usuário autenticado (/pets/me/pontos)
+    PROCEDURE pr_calcular_pontuacao_usuario (
+        p_id_usuario     IN NUMBER,
+        p_total_tarefas  OUT NUMBER,
+        p_total_aulas    OUT NUMBER,
+        p_total_geral    OUT NUMBER
     );
 
-    -- Função 2: Regra de negócio de gamificação para classificação de pontuação
-    FUNCTION fn_classificar_pontos (
-        p_pontos IN NUMBER
-    ) RETURN VARCHAR2;
+    -- ----------------------------------------------------------------
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP (REDUÇÃO DE CÓDIGO JAVA)
+    -- ----------------------------------------------------------------
 
-    -- Procedimento 2: Relatório analítico tabular com quebra de grupo e subtotais manuais
-    PROCEDURE pr_resumo_pontos_tarefas;
+    -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
+    PROCEDURE pr_transferir_responsavel_principal (
+        p_id_pet          IN NUMBER,
+        p_novo_id_usuario IN NUMBER
+    );
 
 END pkg_petguardian;
 /
 
 -- ====================================================================
 -- PARTE 2: CORPO DO PACOTE (PACKAGE BODY)
--- Implementação concreta das rotinas com tratamento de exceções
 -- ====================================================================
 CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
     -- ----------------------------------------------------------------
-    -- FUNÇÃO 1: fn_tarefa_json
-    -- Serialização determinística manual sem funções built-in
+    -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS
     -- ----------------------------------------------------------------
-    FUNCTION fn_tarefa_json (
-        p_id_tarefa     IN NUMBER,
-        p_titulo        IN VARCHAR2,
-        p_pontos        IN NUMBER,
-        p_descricao     IN VARCHAR2,
-        p_nome_pet      IN VARCHAR2,
-        p_nome_status   IN VARCHAR2,
-        p_nome_usuario  IN VARCHAR2
-    ) RETURN VARCHAR2 IS
-        v_json VARCHAR2(4000);
-    BEGIN
-        IF p_id_tarefa IS NULL OR p_id_tarefa <= 0 THEN
-            RAISE_APPLICATION_ERROR(-20001, 'ID da tarefa fornecido é nulo ou inválido.');
-        END IF;
 
-        IF p_titulo IS NULL OR p_nome_pet IS NULL OR p_nome_status IS NULL OR p_nome_usuario IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20002, 'Atributos relacionais obrigatórios da tarefa não podem ser nulos.');
-        END IF;
-
-        v_json := '{' ||
-                  '"id_tarefa":' || p_id_tarefa || ',' ||
-                  '"titulo":"' || REPLACE(REPLACE(p_titulo, '\', '\\'), '"', '\"') || '",' ||
-                  '"pontos":' || NVL(p_pontos, 0) || ',' ||
-                  '"descricao":"' || REPLACE(REPLACE(NVL(p_descricao, ''), '\', '\\'), '"', '\"') || '",' ||
-                  '"pet":"' || REPLACE(REPLACE(p_nome_pet, '\', '\\'), '"', '\"') || '",' ||
-                  '"status":"' || p_nome_status || '",' ||
-                  '"cuidador_responsavel":"' || REPLACE(REPLACE(p_nome_usuario, '\', '\\'), '"', '\"') || '"' ||
-                  '}';
-
-        IF LENGTH(v_json) > 3800 THEN
-            RAISE_APPLICATION_ERROR(-20003, 'Estrutura JSON excedeu o limite máximo seguro de 3800 bytes.');
-        END IF;
-
-        RETURN v_json;
-    EXCEPTION
-        WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20003 AND -20001 THEN
-                RAISE;
-            END IF;
-            RAISE_APPLICATION_ERROR(-20004, 'Falha inesperada durante a serialização manual JSON: ' || SQLERRM);
-    END fn_tarefa_json;
-
-    -- ----------------------------------------------------------------
-    -- PROCEDIMENTO 1: pr_listar_tarefas_json (DBMS_OUTPUT)
-    -- ----------------------------------------------------------------
-    PROCEDURE pr_listar_tarefas_json (
-        p_status_id IN NUMBER DEFAULT NULL
+    PROCEDURE pr_calcular_pontuacao_pet (
+        p_id_pet         IN NUMBER,
+        p_pontos_tarefas OUT NUMBER,
+        p_pontos_aulas   OUT NUMBER,
+        p_pontos_totais  OUT NUMBER
     ) IS
-        CURSOR c_tarefas IS
-            SELECT t.id_tarefa,
-                   t.titulo,
-                   t.pontos_tarefa,
-                   t.descricao,
-                   p.nome AS nome_pet,
-                   s.nome_status,
-                   u.nome AS nome_usuario
-              FROM tarefa t
-              JOIN pet p     ON t.pet_id_pet = p.id_pet
-              JOIN status s  ON t.status_id_status = s.id_status
-              JOIN usuario u ON t.usuario_id_usuario = u.id_usuario
-             WHERE p_status_id IS NULL OR t.status_id_status = p_status_id
-             ORDER BY t.id_tarefa;
-
-        r_tarefa       c_tarefas%ROWTYPE;
-        v_check_status NUMBER;
-        v_qtd          NUMBER := 0;
+        v_existe NUMBER;
     BEGIN
-        IF p_status_id IS NOT NULL THEN
-            SELECT COUNT(1) INTO v_check_status FROM status WHERE id_status = p_status_id;
-            IF v_check_status = 0 THEN
-                RAISE_APPLICATION_ERROR(-20005, 'O ID de status informado (' || p_status_id || ') não existe.');
-            END IF;
+        IF p_id_pet IS NULL OR p_id_pet <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20018, 'ID do pet fornecido é nulo ou inválido.');
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('======================================================================');
-        DBMS_OUTPUT.PUT_LINE('      [PKG_PETGUARDIAN] RELATÓRIO DE TAREFAS SERIALIZADAS EM JSON     ');
-        DBMS_OUTPUT.PUT_LINE('======================================================================');
-
-        OPEN c_tarefas;
-        LOOP
-            FETCH c_tarefas INTO r_tarefa;
-            EXIT WHEN c_tarefas%NOTFOUND;
-
-            DBMS_OUTPUT.PUT_LINE(fn_tarefa_json(
-                r_tarefa.id_tarefa,
-                r_tarefa.titulo,
-                r_tarefa.pontos_tarefa,
-                r_tarefa.descricao,
-                r_tarefa.nome_pet,
-                r_tarefa.nome_status,
-                r_tarefa.nome_usuario
-            ));
-            v_qtd := v_qtd + 1;
-        END LOOP;
-        CLOSE c_tarefas;
-
-        IF v_qtd = 0 THEN
-            RAISE_APPLICATION_ERROR(-20006, 'Nenhuma tarefa atende aos critérios de filtro informados.');
+        SELECT COUNT(1) INTO v_existe FROM pet WHERE id_pet = p_id_pet;
+        IF v_existe = 0 THEN
+            RAISE_APPLICATION_ERROR(-20019, 'Pet com id ' || p_id_pet || ' não foi encontrado.');
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------------');
-        DBMS_OUTPUT.PUT_LINE('Total de registros processados: ' || v_qtd);
-        DBMS_OUTPUT.PUT_LINE('======================================================================');
+        -- Soma de tarefas concluídas do pet (status_id_status = 2)
+        SELECT NVL(SUM(t.pontos_tarefa), 0)
+          INTO p_pontos_tarefas
+          FROM tarefa t
+         WHERE t.pet_id_pet = p_id_pet
+           AND t.status_id_status = 2;
+
+        -- Soma de aulas concluídas associadas às trilhas e módulos do pet
+        SELECT NVL(SUM(a.pontos_aula), 0)
+          INTO p_pontos_aulas
+          FROM aula a
+          JOIN modulo m ON a.modulo_id_modulo = m.id_modulo
+          JOIN trilha tr ON m.trilha_id_trilha = tr.id_trilha
+         WHERE tr.pet_id_pet = p_id_pet
+           AND a.concluida = 1;
+
+        p_pontos_totais := p_pontos_tarefas + p_pontos_aulas;
     EXCEPTION
         WHEN OTHERS THEN
-            IF c_tarefas%ISOPEN THEN
-                CLOSE c_tarefas;
-            END IF;
-            IF SQLCODE BETWEEN -20006 AND -20001 THEN
+            IF SQLCODE BETWEEN -20019 AND -20018 THEN
                 RAISE;
             END IF;
-            RAISE_APPLICATION_ERROR(-20008, 'Erro inesperado em pr_listar_tarefas_json: ' || SQLERRM);
-    END pr_listar_tarefas_json;
+            RAISE_APPLICATION_ERROR(-20020, 'Erro ao calcular pontuação consolidada do pet: ' || SQLERRM);
+    END pr_calcular_pontuacao_pet;
 
-    -- ----------------------------------------------------------------
-    -- PROCEDIMENTO 1 (EXTENSÃO): pr_exportar_tarefas_json (Consumo Java)
-    -- Retorna array JSON via parâmetro OUT CLOB
-    -- ----------------------------------------------------------------
-    PROCEDURE pr_exportar_tarefas_json (
-        p_status_id    IN NUMBER DEFAULT NULL,
-        p_json_output  OUT CLOB
+    PROCEDURE pr_calcular_pontuacao_usuario (
+        p_id_usuario     IN NUMBER,
+        p_total_tarefas  OUT NUMBER,
+        p_total_aulas    OUT NUMBER,
+        p_total_geral    OUT NUMBER
     ) IS
-        CURSOR c_tarefas IS
-            SELECT t.id_tarefa,
-                   t.titulo,
-                   t.pontos_tarefa,
-                   t.descricao,
-                   p.nome AS nome_pet,
-                   s.nome_status,
-                   u.nome AS nome_usuario
-              FROM tarefa t
-              JOIN pet p     ON t.pet_id_pet = p.id_pet
-              JOIN status s  ON t.status_id_status = s.id_status
-              JOIN usuario u ON t.usuario_id_usuario = u.id_usuario
-             WHERE p_status_id IS NULL OR t.status_id_status = p_status_id
-             ORDER BY t.id_tarefa;
-
-        r_tarefa       c_tarefas%ROWTYPE;
-        v_primeiro     BOOLEAN := TRUE;
-        v_json_linha   VARCHAR2(4000);
-        v_check_status NUMBER;
+        v_existe NUMBER;
     BEGIN
-        IF p_status_id IS NOT NULL THEN
-            SELECT COUNT(1) INTO v_check_status FROM status WHERE id_status = p_status_id;
-            IF v_check_status = 0 THEN
-                RAISE_APPLICATION_ERROR(-20005, 'O ID de status informado (' || p_status_id || ') não existe.');
-            END IF;
+        IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20021, 'ID do usuário fornecido é nulo ou inválido.');
         END IF;
 
-        DBMS_LOB.CREATETEMPORARY(p_json_output, TRUE);
-        DBMS_LOB.WRITEAPPEND(p_json_output, 1, '[');
+        SELECT COUNT(1) INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
+        IF v_existe = 0 THEN
+            RAISE_APPLICATION_ERROR(-20022, 'Usuário com id ' || p_id_usuario || ' não foi encontrado.');
+        END IF;
 
-        OPEN c_tarefas;
-        LOOP
-            FETCH c_tarefas INTO r_tarefa;
-            EXIT WHEN c_tarefas%NOTFOUND;
+        -- Tarefas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
+        SELECT NVL(SUM(t.pontos_tarefa), 0)
+          INTO p_total_tarefas
+          FROM tarefa t
+         WHERE t.status_id_status = 2
+           AND t.pet_id_pet IN (
+               SELECT up.pet_id_pet 
+                 FROM usuario_pet up 
+                WHERE up.usuario_id_usuario = p_id_usuario
+           );
 
-            IF NOT v_primeiro THEN
-                DBMS_LOB.WRITEAPPEND(p_json_output, 1, ',');
-            END IF;
+        -- Aulas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
+        SELECT NVL(SUM(a.pontos_aula), 0)
+          INTO p_total_aulas
+          FROM aula a
+          JOIN modulo m ON a.modulo_id_modulo = m.id_modulo
+          JOIN trilha tr ON m.trilha_id_trilha = tr.id_trilha
+         WHERE a.concluida = 1
+           AND tr.pet_id_pet IN (
+               SELECT up.pet_id_pet 
+                 FROM usuario_pet up 
+                WHERE up.usuario_id_usuario = p_id_usuario
+           );
 
-            v_json_linha := fn_tarefa_json(
-                r_tarefa.id_tarefa,
-                r_tarefa.titulo,
-                r_tarefa.pontos_tarefa,
-                r_tarefa.descricao,
-                r_tarefa.nome_pet,
-                r_tarefa.nome_status,
-                r_tarefa.nome_usuario
-            );
-
-            DBMS_LOB.WRITEAPPEND(p_json_output, LENGTH(v_json_linha), v_json_linha);
-            v_primeiro := FALSE;
-        END LOOP;
-        CLOSE c_tarefas;
-
-        DBMS_LOB.WRITEAPPEND(p_json_output, 1, ']');
+        p_total_geral := p_total_tarefas + p_total_aulas;
     EXCEPTION
         WHEN OTHERS THEN
-            IF c_tarefas%ISOPEN THEN
-                CLOSE c_tarefas;
-            END IF;
-            IF SQLCODE BETWEEN -20006 AND -20001 THEN
+            IF SQLCODE BETWEEN -20022 AND -20021 THEN
                 RAISE;
             END IF;
-            RAISE_APPLICATION_ERROR(-20008, 'Erro ao exportar tarefas em JSON via CLOB: ' || SQLERRM);
-    END pr_exportar_tarefas_json;
+            RAISE_APPLICATION_ERROR(-20023, 'Erro ao calcular pontuação agregada do usuário: ' || SQLERRM);
+    END pr_calcular_pontuacao_usuario;
 
     -- ----------------------------------------------------------------
-    -- FUNÇÃO 2: fn_classificar_pontos
-    -- Regra de negócio corporativa de gamificação
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
     -- ----------------------------------------------------------------
-    FUNCTION fn_classificar_pontos (
-        p_pontos IN NUMBER
-    ) RETURN VARCHAR2 IS
+
+
+    -- 2.2 Transferência atômica de responsabilidade principal no Care Circle
+    PROCEDURE pr_transferir_responsavel_principal (
+        p_id_pet          IN NUMBER,
+        p_novo_id_usuario IN NUMBER
+    ) IS
+        v_existe_vinculo NUMBER;
     BEGIN
-        IF p_pontos IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20009, 'Pontuação informada não pode ser nula.');
-        ELSIF p_pontos < 0 THEN
-            RAISE_APPLICATION_ERROR(-20010, 'A pontuação não pode ser negativa: ' || p_pontos);
-        ELSIF p_pontos > 1000 THEN
-            RAISE_APPLICATION_ERROR(-20011, 'Pontuação acima do limite máximo de 1000 pontos: ' || p_pontos);
+        IF p_id_pet IS NULL OR p_novo_id_usuario IS NULL THEN
+            RAISE_APPLICATION_ERROR(-20040, 'ID do pet e do novo responsável não podem ser nulos.');
         END IF;
 
-        IF p_pontos <= 20 THEN
-            RETURN 'BRONZE (BÁSICO)';
-        ELSIF p_pontos <= 45 THEN
-            RETURN 'PRATA (INTERMEDIÁRIO)';
-        ELSIF p_pontos <= 75 THEN
-            RETURN 'OURO (AVANÇADO)';
-        ELSE
-            RETURN 'DIAMANTE (MASTER)';
+        -- Valida se o novo responsável já faz parte do Care Circle do pet
+        SELECT COUNT(1) INTO v_existe_vinculo
+          FROM usuario_pet up
+         WHERE up.pet_id_pet = p_id_pet
+           AND up.usuario_id_usuario = p_novo_id_usuario;
+
+        IF v_existe_vinculo = 0 THEN
+            RAISE_APPLICATION_ERROR(-20041, 'O novo responsável (id ' || p_novo_id_usuario || ') não está vinculado ao pet ' || p_id_pet || ' em USUARIO_PET.');
         END IF;
+
+        -- Transação atômica: desmarca o atual titular e promove o novo
+        UPDATE usuario_pet
+           SET respon_princ = 0
+         WHERE pet_id_pet = p_id_pet;
+
+        UPDATE usuario_pet
+           SET respon_princ = 1
+         WHERE pet_id_pet = p_id_pet
+           AND usuario_id_usuario = p_novo_id_usuario;
     EXCEPTION
         WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20011 AND -20009 THEN
+            IF SQLCODE BETWEEN -20041 AND -20040 THEN
                 RAISE;
             END IF;
-            RAISE_APPLICATION_ERROR(-20012, 'Erro ao classificar pontos: ' || SQLERRM);
-    END fn_classificar_pontos;
-
-    -- ----------------------------------------------------------------
-    -- PROCEDIMENTO 2: pr_resumo_pontos_tarefas
-    -- Relatório analítico tabular com quebra de grupo e subtotais
-    -- ----------------------------------------------------------------
-    PROCEDURE pr_resumo_pontos_tarefas IS
-        CURSOR c_fatos IS
-            SELECT p.id_pet,
-                   p.nome AS nome_pet,
-                   s.id_status,
-                   s.nome_status,
-                   t.pontos_tarefa
-              FROM tarefa t
-              JOIN pet p    ON t.pet_id_pet = p.id_pet
-              JOIN status s ON t.status_id_status = s.id_status
-             ORDER BY p.id_pet ASC, s.id_status ASC;
-
-        r_linha             c_fatos%ROWTYPE;
-        v_pet_atual         pet.id_pet%TYPE := NULL;
-        v_nome_pet_atual    pet.nome%TYPE := NULL;
-        v_status_atual      status.id_status%TYPE := NULL;
-        v_nome_status_atual status.nome_status%TYPE := NULL;
-        v_soma_combinacao   NUMBER(10,2) := 0;
-        v_subtotal_pet      NUMBER(10,2) := 0;
-        v_total_geral       NUMBER(10,2) := 0;
-        v_qtd_linhas        NUMBER := 0;
-    BEGIN
-        OPEN c_fatos;
-
-        DBMS_OUTPUT.PUT_LINE(RPAD('Pet (Cat 1)', 18) || ' ' || RPAD('Status (Cat 2)', 16) || ' ' || LPAD('Pontos', 12));
-        DBMS_OUTPUT.PUT_LINE(RPAD('-', 18, '-')      || ' ' || RPAD('-', 16, '-')       || ' ' || LPAD('-', 12, '-'));
-
-        LOOP
-            FETCH c_fatos INTO r_linha;
-
-            IF (c_fatos%NOTFOUND OR r_linha.id_pet <> v_pet_atual OR r_linha.id_status <> v_status_atual) 
-               AND v_pet_atual IS NOT NULL THEN
-
-                DBMS_OUTPUT.PUT_LINE(
-                    RPAD(TO_CHAR(v_pet_atual) || ' - ' || v_nome_pet_atual, 18) || ' ' ||
-                    RPAD(TO_CHAR(v_status_atual) || ' - ' || v_nome_status_atual, 16) || ' ' ||
-                    LPAD(TO_CHAR(v_soma_combinacao, 'FM999990.00'), 12)
-                );
-
-                v_subtotal_pet    := v_subtotal_pet + v_soma_combinacao;
-                v_total_geral     := v_total_geral + v_soma_combinacao;
-                v_soma_combinacao := 0;
-
-                IF c_fatos%NOTFOUND OR r_linha.id_pet <> v_pet_atual THEN
-                    DBMS_OUTPUT.PUT_LINE(RPAD('Sub Total', 35) || LPAD(TO_CHAR(v_subtotal_pet, 'FM999990.00'), 12));
-                    v_subtotal_pet := 0;
-                END IF;
-            END IF;
-
-            EXIT WHEN c_fatos%NOTFOUND;
-
-            v_pet_atual         := r_linha.id_pet;
-            v_nome_pet_atual    := r_linha.nome_pet;
-            v_status_atual      := r_linha.id_status;
-            v_nome_status_atual := r_linha.nome_status;
-
-            v_soma_combinacao   := v_soma_combinacao + r_linha.pontos_tarefa;
-            v_qtd_linhas        := v_qtd_linhas + 1;
-        END LOOP;
-
-        CLOSE c_fatos;
-
-        IF v_qtd_linhas = 0 THEN
-            RAISE_APPLICATION_ERROR(-20013, 'Nenhum registro de tarefa localizado para sumarização.');
-        END IF;
-
-        DBMS_OUTPUT.PUT_LINE(RPAD('Total Geral', 35) || LPAD(TO_CHAR(v_total_geral, 'FM999990.00'), 12));
-    EXCEPTION
-        WHEN OTHERS THEN
-            IF c_fatos%ISOPEN THEN
-                CLOSE c_fatos;
-            END IF;
-            IF SQLCODE = -20013 THEN
-                RAISE;
-            END IF;
-            RAISE_APPLICATION_ERROR(-20015, 'Erro no relatório analítico pr_resumo_pontos_tarefas: ' || SQLERRM);
-    END pr_resumo_pontos_tarefas;
+            RAISE_APPLICATION_ERROR(-20042, 'Erro ao transferir responsabilidade principal: ' || SQLERRM);
+    END pr_transferir_responsavel_principal;
 
 END pkg_petguardian;
 /
+
+-- ====================================================================
+-- PARTE 3: TRIGGER DE AUDITORIA DML (AUDITORIA_DML_TAREFA)
+-- ====================================================================
+CREATE OR REPLACE TRIGGER trg_audit_tarefa
+AFTER INSERT OR UPDATE OR DELETE ON tarefa
+FOR EACH ROW
+DECLARE
+    v_tipo_operacao VARCHAR2(10);
+    v_valores_old   VARCHAR2(4000) := NULL;
+    v_valores_new   VARCHAR2(4000) := NULL;
+BEGIN
+    IF INSERTING THEN
+        v_tipo_operacao := 'INSERT';
+        v_valores_new   := 'ID_TAREFA=' || :NEW.id_tarefa || 
+                           '; TITULO=' || :NEW.titulo || 
+                           '; PONTOS=' || :NEW.pontos_tarefa || 
+                           '; STATUS=' || :NEW.status_id_status || 
+                           '; PET=' || :NEW.pet_id_pet || 
+                           '; USUARIO=' || :NEW.usuario_id_usuario;
+                           
+        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
+        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, NULL, v_valores_new);
+
+    ELSIF UPDATING THEN
+        v_tipo_operacao := 'UPDATE';
+        v_valores_old   := 'ID_TAREFA=' || :OLD.id_tarefa || 
+                           '; TITULO=' || :OLD.titulo || 
+                           '; PONTOS=' || :OLD.pontos_tarefa || 
+                           '; STATUS=' || :OLD.status_id_status || 
+                           '; PET=' || :OLD.pet_id_pet || 
+                           '; USUARIO=' || :OLD.usuario_id_usuario;
+
+        v_valores_new   := 'ID_TAREFA=' || :NEW.id_tarefa || 
+                           '; TITULO=' || :NEW.titulo || 
+                           '; PONTOS=' || :NEW.pontos_tarefa || 
+                           '; STATUS=' || :NEW.status_id_status || 
+                           '; PET=' || :NEW.pet_id_pet || 
+                           '; USUARIO=' || :NEW.usuario_id_usuario;
+
+        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
+        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new);
+
+    ELSIF DELETING THEN
+        v_tipo_operacao := 'DELETE';
+        v_valores_old   := 'ID_TAREFA=' || :OLD.id_tarefa || 
+                           '; TITULO=' || :OLD.titulo || 
+                           '; PONTOS=' || :OLD.pontos_tarefa || 
+                           '; STATUS=' || :OLD.status_id_status || 
+                           '; PET=' || :OLD.pet_id_pet || 
+                           '; USUARIO=' || :OLD.usuario_id_usuario;
+
+        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
+        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, NULL);
+    END IF;
+END trg_audit_tarefa;
+/
+
+-- ====================================================================
+-- PARTE 4: BATERIA DE TESTES DE INTEGRAÇÃO (PKG_PETGUARDIAN)
+-- ====================================================================
+
+PROMPT ====================================================================;
+PROMPT  TESTES DAS ROTINAS DO PACOTE PKG_PETGUARDIAN (SPRINT 4)
+PROMPT ====================================================================;
+
+-- 1. Teste de Pontuação de Pet Individual (Thor - ID 1)
+PROMPT === TESTE 1: pr_calcular_pontuacao_pet (Thor ID 1) ===;
+DECLARE
+    v_tar NUMBER;
+    v_aul NUMBER;
+    v_tot NUMBER;
+BEGIN
+    pkg_petguardian.pr_calcular_pontuacao_pet(1, v_tar, v_aul, v_tot);
+    DBMS_OUTPUT.PUT_LINE('Thor (ID 1) -> Tarefas: ' || v_tar || ' | Aulas: ' || v_aul || ' | Total: ' || v_tot);
+END;
+/
+
+-- 2. Teste de Pontuação Agregada dos Pets do Usuário (Carlos Silva - ID 1)
+PROMPT === TESTE 2: pr_calcular_pontuacao_usuario (Carlos Silva ID 1) ===;
+DECLARE
+    v_tar_usr NUMBER;
+    v_aul_usr NUMBER;
+    v_tot_usr NUMBER;
+BEGIN
+    pkg_petguardian.pr_calcular_pontuacao_usuario(1, v_tar_usr, v_aul_usr, v_tot_usr);
+    DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Tarefas: ' || v_tar_usr || ' | Aulas: ' || v_aul_usr || ' | Total: ' || v_tot_usr);
+END;
+/
+
+-- 3. Teste de Transferência de Titularidade no Care Circle
+PROMPT === TESTE 3: pr_transferir_responsavel_principal (Thor: Carlos -> Lucas Mendes) ===;
+BEGIN
+    pkg_petguardian.pr_transferir_responsavel_principal(1, 5);
+    DBMS_OUTPUT.PUT_LINE('Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).');
+END;
+/
+
+-- 4. Evidências de Auditoria DML Registradas pela Trigger
+PROMPT === TESTE 4: Evidência na Tabela AUDITORIA_DML_TAREFA ===;
+SELECT id_auditoria, nome_usuario, tipo_operacao, data_hora_operacao, valores_novos
+  FROM auditoria_dml_tarefa
+ ORDER BY id_auditoria ASC;
+
+COMMIT;
