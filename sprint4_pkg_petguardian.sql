@@ -21,13 +21,28 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
 
     -- Exceções públicas com códigos ORA padronizados
     e_id_invalido            EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_id_invalido, -20018);
+
     e_pet_inexistente        EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_pet_inexistente, -20019);
+
     e_usuario_inexistente    EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_usuario_inexistente, -20022);
+
     e_vinculo_inexistente    EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_vinculo_inexistente, -20041);
+
     e_tarefa_inexistente     EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_tarefa_inexistente, -20050);
+
     e_aula_inexistente       EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_aula_inexistente, -20051);
+
     e_tarefa_nao_pendente    EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_tarefa_nao_pendente, -20052);
+
     e_pontos_invalido        EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_pontos_invalido, -20053);
 
     -- ----------------------------------------------------------------
     -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS (APP & JAVA)
@@ -116,10 +131,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
         p_pontos_totais := p_pontos_tarefas + p_pontos_aulas;
     EXCEPTION
+        WHEN e_id_invalido OR e_pet_inexistente THEN
+            RAISE;
         WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20019 AND -20018 THEN
-                RAISE;
-            END IF;
             RAISE_APPLICATION_ERROR(-20020, 'Erro ao calcular pontuação consolidada do pet: ' || SQLERRM);
     END pr_calcular_pontuacao_pet;
 
@@ -132,7 +146,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         v_existe NUMBER;
     BEGIN
         IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
-            RAISE_APPLICATION_ERROR(-20021, 'ID do usuário fornecido é nulo ou inválido.');
+            RAISE_APPLICATION_ERROR(-20018, 'ID do usuário fornecido é nulo ou inválido.');
         END IF;
 
         SELECT COUNT(1) INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
@@ -166,10 +180,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
         p_pontos_totais := p_pontos_tarefas + p_pontos_aulas;
     EXCEPTION
+        WHEN e_id_invalido OR e_usuario_inexistente THEN
+            RAISE;
         WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20022 AND -20021 THEN
-                RAISE;
-            END IF;
             RAISE_APPLICATION_ERROR(-20023, 'Erro ao calcular pontuação agregada do usuário: ' || SQLERRM);
     END pr_calcular_pontuacao_usuario;
 
@@ -187,7 +200,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         v_total_aulas   NUMBER;
     BEGIN
         IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
-            RAISE_APPLICATION_ERROR(-20021, 'ID do usuário fornecido é nulo ou inválido.');
+            RAISE_APPLICATION_ERROR(-20018, 'ID do usuário fornecido é nulo ou inválido.');
         END IF;
 
         SELECT COUNT(1) INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
@@ -210,7 +223,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                SELECT up.pet_id_pet
                  FROM usuario_pet up
                 WHERE up.usuario_id_usuario = p_id_usuario
-           );
+            );
 
         -- Tarefas pendentes válidas (status_id_status = 1 e prazo >= SYSTIMESTAMP)
         SELECT NVL(COUNT(1), 0)
@@ -222,7 +235,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                SELECT up.pet_id_pet
                  FROM usuario_pet up
                 WHERE up.usuario_id_usuario = p_id_usuario
-           );
+            );
 
         -- Tarefas concluídas (status_id_status = 2)
         SELECT NVL(COUNT(1), 0)
@@ -233,15 +246,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                SELECT up.pet_id_pet
                  FROM usuario_pet up
                 WHERE up.usuario_id_usuario = p_id_usuario
-           );
+            );
 
         -- Pontuação acumulada total somada (tarefas concluídas + aulas finalizadas)
         pr_calcular_pontuacao_usuario(p_id_usuario, v_total_tarefas, v_total_aulas, p_pontos_acumulados);
     EXCEPTION
+        WHEN e_id_invalido OR e_usuario_inexistente THEN
+            RAISE;
         WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20022 AND -20021 THEN
-                RAISE;
-            END IF;
             RAISE_APPLICATION_ERROR(-20024, 'Erro ao obter resumo da rede de cuidado: ' || SQLERRM);
     END pr_obter_resumo_rede_cuidado;
 
@@ -257,8 +269,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     ) IS
         v_existe_vinculo NUMBER;
     BEGIN
-        IF p_id_pet IS NULL OR p_novo_id_usuario IS NULL THEN
-            RAISE_APPLICATION_ERROR(-20040, 'ID do pet e do novo responsável não podem ser nulos.');
+        IF p_id_pet IS NULL OR p_id_pet <= 0 OR p_novo_id_usuario IS NULL OR p_novo_id_usuario <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20018, 'ID do pet e do novo responsável não podem ser nulos ou inválidos.');
         END IF;
 
         -- Valida se o novo responsável já faz parte do Care Circle do pet
@@ -281,10 +293,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
          WHERE pet_id_pet = p_id_pet
            AND usuario_id_usuario = p_novo_id_usuario;
     EXCEPTION
+        WHEN e_id_invalido OR e_vinculo_inexistente THEN
+            RAISE;
         WHEN OTHERS THEN
-            IF SQLCODE BETWEEN -20041 AND -20040 THEN
-                RAISE;
-            END IF;
             RAISE_APPLICATION_ERROR(-20042, 'Erro ao transferir responsabilidade principal: ' || SQLERRM);
     END pr_transferir_responsavel_principal;
 

@@ -210,6 +210,21 @@ CREATE TABLE auditoria_dml_tarefa (
     valores_novos      VARCHAR2(4000)
 );
 
+-- ÍNDICES EM CHAVES ESTRANGEIRAS (FKs) PARA PERFORMANCE E PREVENÇÃO DE TABLE LOCKS
+CREATE INDEX idx_cidade_estado ON cidade(estado_id_estado);
+CREATE INDEX idx_bairro_cidade ON bairro(cidade_id_cidade);
+CREATE INDEX idx_endereco_bairro ON endereco(bairro_id_bairro);
+CREATE INDEX idx_usuario_endereco ON usuario(endereco_id_endereco);
+CREATE INDEX idx_pet_raca ON pet(raca_id_raca);
+CREATE INDEX idx_usuario_pet_pet ON usuario_pet(pet_id_pet);
+CREATE INDEX idx_tarefa_pet ON tarefa(pet_id_pet);
+CREATE INDEX idx_tarefa_status ON tarefa(status_id_status);
+CREATE INDEX idx_tarefa_usuario ON tarefa(usuario_id_usuario);
+CREATE INDEX idx_trilha_pet ON trilha(pet_id_pet);
+CREATE INDEX idx_modulo_trilha ON modulo(trilha_id_trilha);
+CREATE INDEX idx_aula_modulo ON aula(modulo_id_modulo);
+CREATE INDEX idx_historico_pet ON historico(pet_id_pet);
+
 
 -- PARTE 2: CARGA DE DADOS VÁLIDOS
 
