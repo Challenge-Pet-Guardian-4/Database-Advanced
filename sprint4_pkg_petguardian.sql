@@ -44,9 +44,19 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
     -- 1.2 Cálculo agregado de todos os pets do usuário autenticado (/pets/me/pontos)
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
-        p_total_tarefas  OUT NUMBER,
-        p_total_aulas    OUT NUMBER,
-        p_total_geral    OUT NUMBER
+        p_pontos_tarefas OUT NUMBER,
+        p_pontos_aulas   OUT NUMBER,
+        p_pontos_totais  OUT NUMBER
+    );
+
+    -- 1.3 Relatório consolidado da rede de cuidado do usuário (/usuarios/me/rede-cuidado)
+    PROCEDURE pr_obter_resumo_rede_cuidado (
+        p_id_usuario         IN NUMBER,
+        p_total_pets         OUT NUMBER,
+        p_total_cuidadores   OUT NUMBER,
+        p_tarefas_pendentes  OUT NUMBER,
+        p_tarefas_concluidas OUT NUMBER,
+        p_pontos_acumulados  OUT NUMBER
     );
 
     -- ----------------------------------------------------------------
@@ -115,9 +125,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
-        p_total_tarefas  OUT NUMBER,
-        p_total_aulas    OUT NUMBER,
-        p_total_geral    OUT NUMBER
+        p_pontos_tarefas OUT NUMBER,
+        p_pontos_aulas   OUT NUMBER,
+        p_pontos_totais  OUT NUMBER
     ) IS
         v_existe NUMBER;
     BEGIN
@@ -132,7 +142,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
         -- Tarefas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
         SELECT NVL(SUM(t.pontos_tarefa), 0)
-          INTO p_total_tarefas
+          INTO p_pontos_tarefas
           FROM tarefa t
          WHERE t.status_id_status = 2
            AND t.pet_id_pet IN (
@@ -143,7 +153,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
 
         -- Aulas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
         SELECT NVL(SUM(a.pontos_aula), 0)
-          INTO p_total_aulas
+          INTO p_pontos_aulas
           FROM aula a
           JOIN modulo m ON a.modulo_id_modulo = m.id_modulo
           JOIN trilha tr ON m.trilha_id_trilha = tr.id_trilha
@@ -154,7 +164,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                 WHERE up.usuario_id_usuario = p_id_usuario
            );
 
-        p_total_geral := p_total_tarefas + p_total_aulas;
+        p_pontos_totais := p_pontos_tarefas + p_pontos_aulas;
     EXCEPTION
         WHEN OTHERS THEN
             IF SQLCODE BETWEEN -20022 AND -20021 THEN
@@ -162,6 +172,78 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             END IF;
             RAISE_APPLICATION_ERROR(-20023, 'Erro ao calcular pontuação agregada do usuário: ' || SQLERRM);
     END pr_calcular_pontuacao_usuario;
+
+    -- 1.3 Relatório consolidado da rede de cuidado do usuário (/usuarios/me/rede-cuidado)
+    PROCEDURE pr_obter_resumo_rede_cuidado (
+        p_id_usuario         IN NUMBER,
+        p_total_pets         OUT NUMBER,
+        p_total_cuidadores   OUT NUMBER,
+        p_tarefas_pendentes  OUT NUMBER,
+        p_tarefas_concluidas OUT NUMBER,
+        p_pontos_acumulados  OUT NUMBER
+    ) IS
+        v_existe        NUMBER;
+        v_total_tarefas NUMBER;
+        v_total_aulas   NUMBER;
+    BEGIN
+        IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20021, 'ID do usuário fornecido é nulo ou inválido.');
+        END IF;
+
+        SELECT COUNT(1) INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
+        IF v_existe = 0 THEN
+            RAISE_APPLICATION_ERROR(-20022, 'Usuário com id ' || p_id_usuario || ' não foi encontrado.');
+        END IF;
+
+        -- Total de pets tutelados ou co-tutelados pelo usuário
+        SELECT NVL(COUNT(DISTINCT up.pet_id_pet), 0)
+          INTO p_total_pets
+          FROM usuario_pet up
+         WHERE up.usuario_id_usuario = p_id_usuario;
+
+        -- Total de co-cuidadores distintos na rede do tutor
+        SELECT NVL(COUNT(DISTINCT up2.usuario_id_usuario), 0)
+          INTO p_total_cuidadores
+          FROM usuario_pet up2
+         WHERE up2.usuario_id_usuario <> p_id_usuario
+           AND up2.pet_id_pet IN (
+               SELECT up.pet_id_pet
+                 FROM usuario_pet up
+                WHERE up.usuario_id_usuario = p_id_usuario
+           );
+
+        -- Tarefas pendentes válidas (status_id_status = 1 e prazo >= SYSTIMESTAMP)
+        SELECT NVL(COUNT(1), 0)
+          INTO p_tarefas_pendentes
+          FROM tarefa t
+         WHERE t.status_id_status = 1
+           AND t.prazo >= SYSTIMESTAMP
+           AND t.pet_id_pet IN (
+               SELECT up.pet_id_pet
+                 FROM usuario_pet up
+                WHERE up.usuario_id_usuario = p_id_usuario
+           );
+
+        -- Tarefas concluídas (status_id_status = 2)
+        SELECT NVL(COUNT(1), 0)
+          INTO p_tarefas_concluidas
+          FROM tarefa t
+         WHERE t.status_id_status = 2
+           AND t.pet_id_pet IN (
+               SELECT up.pet_id_pet
+                 FROM usuario_pet up
+                WHERE up.usuario_id_usuario = p_id_usuario
+           );
+
+        -- Pontuação acumulada total somada (tarefas concluídas + aulas finalizadas)
+        pr_calcular_pontuacao_usuario(p_id_usuario, v_total_tarefas, v_total_aulas, p_pontos_acumulados);
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE BETWEEN -20022 AND -20021 THEN
+                RAISE;
+            END IF;
+            RAISE_APPLICATION_ERROR(-20024, 'Erro ao obter resumo da rede de cuidado: ' || SQLERRM);
+    END pr_obter_resumo_rede_cuidado;
 
     -- ----------------------------------------------------------------
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
@@ -306,8 +388,26 @@ BEGIN
 END;
 /
 
--- 4. Evidências de Auditoria DML Registradas pela Trigger
-PROMPT === TESTE 4: Evidência na Tabela AUDITORIA_DML_TAREFA ===;
+-- 4. Teste de Resumo da Rede de Cuidado (Carlos Silva - ID 1)
+PROMPT === TESTE 4: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===;
+DECLARE
+    v_tot_pets NUMBER;
+    v_tot_cuid NUMBER;
+    v_tar_pend NUMBER;
+    v_tar_conc NUMBER;
+    v_pts_acum NUMBER;
+BEGIN
+    pkg_petguardian.pr_obter_resumo_rede_cuidado(1, v_tot_pets, v_tot_cuid, v_tar_pend, v_tar_conc, v_pts_acum);
+    DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Pets: ' || v_tot_pets || 
+                         ' | Cuidadores: ' || v_tot_cuid || 
+                         ' | Tarefas Pendentes: ' || v_tar_pend || 
+                         ' | Tarefas Concluídas: ' || v_tar_conc || 
+                         ' | Pontos Acumulados: ' || v_pts_acum);
+END;
+/
+
+-- 5. Evidências de Auditoria DML Registradas pela Trigger
+PROMPT === TESTE 5: Evidência na Tabela AUDITORIA_DML_TAREFA ===;
 SELECT id_auditoria, nome_usuario, tipo_operacao, data_hora_operacao, valores_novos
   FROM auditoria_dml_tarefa
  ORDER BY id_auditoria ASC;
