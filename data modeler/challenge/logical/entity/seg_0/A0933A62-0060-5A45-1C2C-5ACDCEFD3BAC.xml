@@ -2,7 +2,10 @@
 <Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="A0933A62-0060-5A45-1C2C-5ACDCEFD3BAC" name="telefone">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 14:23:54 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
 <fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
@@ -15,7 +18,10 @@
 <Attribute name="id_telefone" id="004AC3E6-9863-9E96-0F2F-5969E31E9D07">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 14:24:25 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
@@ -25,7 +31,10 @@
 <Attribute name="num_ddd" id="156AF0BC-747D-0D55-E21A-6FA1E06C8624">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 14:24:32 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
@@ -35,7 +44,10 @@
 <Attribute name="num_tel" id="5C51ECA2-D859-BD8A-A6F3-A6DE75F0DD07">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 14:25:57 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
@@ -47,7 +59,10 @@
 <identifier id="F9C59861-C0D9-D62D-548C-67CB1A56EBD9" name="telefone PK">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 14:24:30 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <pk>true</pk>
 <usedAttributes>
 <attributeRef>004AC3E6-9863-9E96-0F2F-5969E31E9D07</attributeRef>

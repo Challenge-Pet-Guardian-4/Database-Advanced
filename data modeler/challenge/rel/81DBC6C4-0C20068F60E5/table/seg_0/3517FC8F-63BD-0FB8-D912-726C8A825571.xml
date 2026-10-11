@@ -1,0 +1,89 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="3517FC8F-63BD-0FB8-D912-726C8A825571" name="trilha">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>787D63A4-FB90-C22E-901F-F6BD80AFDB5D</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="id_trilha" id="79BD9BF5-AE00-D13E-F1F8-C540E85DA3D1">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>DABD9CDB-70A9-B2C8-D70A-5BEA9B48DD42</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>5</dataTypePrecision>
+<ownDataTypeParameters>,5,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="nome" id="303095EA-3564-BD0E-E17B-304B4BF736FA">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>2C377BA9-2250-ED46-56A5-9EA1EF247DC3</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>30</dataTypeSize>
+<ownDataTypeParameters>30,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="descricao" id="84EF9439-D3B7-3376-2F5F-F2FA173D14A8">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>94B5BF11-67A9-66A7-2D2E-9C11C5ECEFE4</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="pet_id_pet" id="B2677C31-E3BB-41CA-64F6-AC2454FB08BE">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>42915AA5-2B4B-E951-AACF-D2811A9DF62F</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>3</dataTypePrecision>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="A2C1F236-9B9F-FDC5-3B79-BC2639AF8BDA" referredColumn="F51BD28F-8C3C-3F41-6BFE-544A0336DD69"/>
+</associations>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="AEE4763D-7300-868B-B7F7-B957358DDFD1" name="trilha_PK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>8128F2DA-A3D2-57BF-3789-3B911A0EB0FB</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="79BD9BF5-AE00-D13E-F1F8-C540E85DA3D1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B9E108B0-3A84-CB25-0C29-65A0316DA70D" name="trilha_pet_FK">
+<createdBy>Enzo</createdBy>
+<createdTime>2026-10-11 14:01:20 UTC</createdTime>
+<generatorID>60AB43E0-84F6-8CFE-25DC-843DDAAE2D11</generatorID>
+<ownerDesignName>challenge</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="B2677C31-E3BB-41CA-64F6-AC2454FB08BE"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

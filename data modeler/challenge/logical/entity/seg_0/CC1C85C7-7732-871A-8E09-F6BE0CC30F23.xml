@@ -2,7 +2,10 @@
 <Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="CC1C85C7-7732-871A-8E09-F6BE0CC30F23" name="status">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 18:04:03 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
 <fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
@@ -15,7 +18,10 @@
 <Attribute name="id_status" id="733F42C1-9D56-CB00-FC7C-1BBFED52BFB5">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 18:04:12 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
@@ -25,7 +31,10 @@
 <Attribute name="nome_status" id="EAFE075E-F6EB-EDF6-82D2-8E53DB9C60AD">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 18:04:23 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
@@ -42,7 +51,10 @@
 <identifier id="DA46FCC6-C6FA-17AF-1FB8-4792222080C8" name="status PK">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 18:04:21 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <pk>true</pk>
 <usedAttributes>
 <attributeRef>733F42C1-9D56-CB00-FC7C-1BBFED52BFB5</attributeRef>

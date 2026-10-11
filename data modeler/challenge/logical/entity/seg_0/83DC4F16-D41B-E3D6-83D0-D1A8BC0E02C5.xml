@@ -2,7 +2,10 @@
 <Entity class="oracle.dbtools.crest.model.design.logical.Entity" directorySegmentName="seg_0" id="83DC4F16-D41B-E3D6-83D0-D1A8BC0E02C5" name="bairro">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:53:19 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <adequatelyNormalized>NO</adequatelyNormalized>
 <expectedVolumes>0</expectedVolumes>
 <fwdEngineeringStrategyName>Single Table</fwdEngineeringStrategyName>
@@ -15,7 +18,10 @@
 <Attribute name="id_bairro" id="CCBCBA17-75A6-FB8F-3E4B-7F96EDD71374">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:53:19 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
@@ -25,7 +31,10 @@
 <Attribute name="nome_bairro" id="04B9B47D-C0F7-C9D2-9FD1-34894F9D5772">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:53:19 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
@@ -36,7 +45,10 @@
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:54:03 UTC</createdTime>
 <generatorID>1E880A5B-03CC-44A7-DC0E-66B1C5E64892</generatorID>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <referedAttribute>32124F2C-2037-3537-492B-C6AF2039FC2C</referedAttribute>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -49,7 +61,10 @@
 <identifier id="439587D9-6F36-064D-8F3B-4B1D252A7B24" name="Cidade PK">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:53:19 UTC</createdTime>
-<ownerDesignName>datamodeler</ownerDesignName>
+<ownerDesignName>challenge</ownerDesignName>
+<engineerTo>
+<item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
+</engineerTo>
 <pk>true</pk>
 <usedAttributes>
 <attributeRef>CCBCBA17-75A6-FB8F-3E4B-7F96EDD71374</attributeRef>
