@@ -262,7 +262,8 @@ Conforme os requisitos da **Sprint 4** (*Mastering Relational and Non-Relational
 
 ### Seção 1: Pontuação Gamificada de Pets e Tutores (Score de Bem-Estar)
 * **`pr_calcular_pontuacao_pet`:** Calcula os pontos consolidados de tarefas e aulas concluídas do pet individual (`GET /pets/{id}/pontos`).
-* **`pr_calcular_pontuacao_usuario`:** Calcula a pontuação total agregada de todos os pets vinculados ao usuário autenticado (`GET /pets/me/pontos` e `GET /usuarios/me/rede-cuidado`).
+* **`pr_calcular_pontuacao_usuario`:** Calcula a pontuação total agregada de todos os pets vinculados ao usuário autenticado (utilizado internamente pelo resumo da rede de cuidado).
+* **`pr_obter_resumo_rede_cuidado`:** Relatório consolidado da rede de cuidado do usuário (totais de pets, co-cuidadores, tarefas pendentes, tarefas concluídas e pontos acumulados) consumido em `GET /usuarios/me/rede-cuidado`.
 
 ### Seção 2: Operações Transacionais do App (Redução de Código Java & Atomicidade)
 * **`pr_transferir_responsavel_principal`:** Transação atômica em `USUARIO_PET` que desmarca a titularidade anterior e promove o novo cuidador principal (`PATCH /pets/{id}/responsavel-principal`).

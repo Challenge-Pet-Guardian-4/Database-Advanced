@@ -32,18 +32,6 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
     e_vinculo_inexistente    EXCEPTION;
     PRAGMA EXCEPTION_INIT(e_vinculo_inexistente, -20041);
 
-    e_tarefa_inexistente     EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_tarefa_inexistente, -20050);
-
-    e_aula_inexistente       EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_aula_inexistente, -20051);
-
-    e_tarefa_nao_pendente    EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_tarefa_nao_pendente, -20052);
-
-    e_pontos_invalido        EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_pontos_invalido, -20053);
-
     -- ----------------------------------------------------------------
     -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS (APP & JAVA)
     -- ----------------------------------------------------------------
@@ -56,7 +44,7 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_pontos_totais  OUT NUMBER
     );
 
-    -- 1.2 Cálculo agregado de todos os pets do usuário autenticado (/pets/me/pontos)
+    -- 1.2 Cálculo agregado de todos os pets do usuário (usado internamente por pr_obter_resumo_rede_cuidado)
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -96,6 +84,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS
     -- ----------------------------------------------------------------
 
+    -- 1.1 Cálculo consolidado de pontuação do pet individual (tarefas + aulas)
     PROCEDURE pr_calcular_pontuacao_pet (
         p_id_pet         IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -137,6 +126,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20020, 'Erro ao calcular pontuação consolidada do pet: ' || SQLERRM);
     END pr_calcular_pontuacao_pet;
 
+    -- 1.2 Cálculo agregado de todos os pets do usuário (usado internamente por pr_obter_resumo_rede_cuidado)
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -261,8 +251,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
     -- ----------------------------------------------------------------
 
-
-    -- 2.2 Transferência atômica de responsabilidade principal no Care Circle
+    -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
     PROCEDURE pr_transferir_responsavel_principal (
         p_id_pet          IN NUMBER,
         p_novo_id_usuario IN NUMBER
@@ -391,16 +380,8 @@ BEGIN
 END;
 /
 
--- 3. Teste de Transferência de Titularidade no Care Circle
-PROMPT === TESTE 3: pr_transferir_responsavel_principal (Thor: Carlos -> Lucas Mendes) ===;
-BEGIN
-    pkg_petguardian.pr_transferir_responsavel_principal(1, 5);
-    DBMS_OUTPUT.PUT_LINE('Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).');
-END;
-/
-
--- 4. Teste de Resumo da Rede de Cuidado (Carlos Silva - ID 1)
-PROMPT === TESTE 4: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===;
+-- 3. Teste de Resumo da Rede de Cuidado (Carlos Silva - ID 1)
+PROMPT === TESTE 3: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===;
 DECLARE
     v_tot_pets NUMBER;
     v_tot_cuid NUMBER;
@@ -414,6 +395,14 @@ BEGIN
                          ' | Tarefas Pendentes: ' || v_tar_pend || 
                          ' | Tarefas Concluídas: ' || v_tar_conc || 
                          ' | Pontos Acumulados: ' || v_pts_acum);
+END;
+/
+
+-- 4. Teste de Transferência de Titularidade no Care Circle
+PROMPT === TESTE 4: pr_transferir_responsavel_principal (Thor: Carlos -> Lucas Mendes) ===;
+BEGIN
+    pkg_petguardian.pr_transferir_responsavel_principal(1, 5);
+    DBMS_OUTPUT.PUT_LINE('Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).');
 END;
 /
 
