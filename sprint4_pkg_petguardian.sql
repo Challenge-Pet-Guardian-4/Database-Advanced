@@ -62,6 +62,11 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_pontos_acumulados  OUT NUMBER
     );
 
+    -- 1.4 Classificação de gamificação do tutor baseada no XP acumulado (BRONZE, PRATA, OURO)
+    FUNCTION fn_obter_nivel_usuario (
+        p_id_usuario IN NUMBER
+    ) RETURN VARCHAR2;
+
     -- ----------------------------------------------------------------
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP (REDUÇÃO DE CÓDIGO JAVA)
     -- ----------------------------------------------------------------
@@ -215,28 +220,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                 WHERE up.usuario_id_usuario = p_id_usuario
             );
 
-        -- Tarefas pendentes válidas (status_id_status = 1 e prazo >= SYSTIMESTAMP)
-        SELECT NVL(COUNT(1), 0)
-          INTO p_tarefas_pendentes
+        -- Tarefas pendentes e concluídas da rede do tutor (agregação unificada condicional)
+        SELECT NVL(COUNT(CASE WHEN t.status_id_status = 1 AND t.prazo >= SYSTIMESTAMP THEN 1 END), 0),
+               NVL(COUNT(CASE WHEN t.status_id_status = 2 THEN 1 END), 0)
+          INTO p_tarefas_pendentes,
+               p_tarefas_concluidas
           FROM tarefa t
-         WHERE t.status_id_status = 1
-           AND t.prazo >= SYSTIMESTAMP
-           AND t.pet_id_pet IN (
-               SELECT up.pet_id_pet
-                 FROM usuario_pet up
-                WHERE up.usuario_id_usuario = p_id_usuario
-            );
-
-        -- Tarefas concluídas (status_id_status = 2)
-        SELECT NVL(COUNT(1), 0)
-          INTO p_tarefas_concluidas
-          FROM tarefa t
-         WHERE t.status_id_status = 2
-           AND t.pet_id_pet IN (
-               SELECT up.pet_id_pet
-                 FROM usuario_pet up
-                WHERE up.usuario_id_usuario = p_id_usuario
-            );
+         WHERE t.pet_id_pet IN (
+             SELECT up.pet_id_pet
+               FROM usuario_pet up
+              WHERE up.usuario_id_usuario = p_id_usuario
+         );
 
         -- Pontuação acumulada total somada (tarefas concluídas + aulas finalizadas)
         pr_calcular_pontuacao_usuario(p_id_usuario, v_total_tarefas, v_total_aulas, p_pontos_acumulados);
@@ -246,6 +240,32 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         WHEN OTHERS THEN
             RAISE_APPLICATION_ERROR(-20024, 'Erro ao obter resumo da rede de cuidado: ' || SQLERRM);
     END pr_obter_resumo_rede_cuidado;
+
+    -- 1.4 Classificação de gamificação do tutor baseada no XP acumulado (BRONZE, PRATA, OURO)
+    FUNCTION fn_obter_nivel_usuario (
+        p_id_usuario IN NUMBER
+    ) RETURN VARCHAR2 IS
+        v_tar NUMBER;
+        v_aul NUMBER;
+        v_tot NUMBER;
+    BEGIN
+        IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
+            RETURN 'BRONZE';
+        END IF;
+
+        pr_calcular_pontuacao_usuario(p_id_usuario, v_tar, v_aul, v_tot);
+
+        IF v_tot <= 50 THEN
+            RETURN 'BRONZE';
+        ELSIF v_tot <= 150 THEN
+            RETURN 'PRATA';
+        ELSE
+            RETURN 'OURO';
+        END IF;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN 'BRONZE';
+    END fn_obter_nivel_usuario;
 
     -- ----------------------------------------------------------------
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
@@ -272,15 +292,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20041, 'O novo responsável (id ' || p_novo_id_usuario || ') não está vinculado ao pet ' || p_id_pet || ' em USUARIO_PET.');
         END IF;
 
-        -- Transação atômica: desmarca o atual titular e promove o novo
+        -- Transação atômica otimizada em uma única operação DML (evita duplo lock e estado intermediário sem titular)
         UPDATE usuario_pet
-           SET respon_princ = 0
+           SET respon_princ = CASE 
+                                  WHEN usuario_id_usuario = p_novo_id_usuario THEN 1 
+                                  ELSE 0 
+                              END
          WHERE pet_id_pet = p_id_pet;
-
-        UPDATE usuario_pet
-           SET respon_princ = 1
-         WHERE pet_id_pet = p_id_pet
-           AND usuario_id_usuario = p_novo_id_usuario;
     EXCEPTION
         WHEN e_id_invalido OR e_vinculo_inexistente THEN
             RAISE;
@@ -302,49 +320,34 @@ DECLARE
     v_valores_old   VARCHAR2(4000) := NULL;
     v_valores_new   VARCHAR2(4000) := NULL;
 BEGIN
+    IF INSERTING OR UPDATING THEN
+        v_valores_new := 'ID_TAREFA=' || :NEW.id_tarefa || 
+                         '; TITULO=' || :NEW.titulo || 
+                         '; PONTOS=' || :NEW.pontos_tarefa || 
+                         '; STATUS=' || :NEW.status_id_status || 
+                         '; PET=' || :NEW.pet_id_pet || 
+                         '; USUARIO=' || :NEW.usuario_id_usuario;
+    END IF;
+
+    IF UPDATING OR DELETING THEN
+        v_valores_old := 'ID_TAREFA=' || :OLD.id_tarefa || 
+                         '; TITULO=' || :OLD.titulo || 
+                         '; PONTOS=' || :OLD.pontos_tarefa || 
+                         '; STATUS=' || :OLD.status_id_status || 
+                         '; PET=' || :OLD.pet_id_pet || 
+                         '; USUARIO=' || :OLD.usuario_id_usuario;
+    END IF;
+
     IF INSERTING THEN
         v_tipo_operacao := 'INSERT';
-        v_valores_new   := 'ID_TAREFA=' || :NEW.id_tarefa || 
-                           '; TITULO=' || :NEW.titulo || 
-                           '; PONTOS=' || :NEW.pontos_tarefa || 
-                           '; STATUS=' || :NEW.status_id_status || 
-                           '; PET=' || :NEW.pet_id_pet || 
-                           '; USUARIO=' || :NEW.usuario_id_usuario;
-                           
-        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
-        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, NULL, v_valores_new);
-
     ELSIF UPDATING THEN
         v_tipo_operacao := 'UPDATE';
-        v_valores_old   := 'ID_TAREFA=' || :OLD.id_tarefa || 
-                           '; TITULO=' || :OLD.titulo || 
-                           '; PONTOS=' || :OLD.pontos_tarefa || 
-                           '; STATUS=' || :OLD.status_id_status || 
-                           '; PET=' || :OLD.pet_id_pet || 
-                           '; USUARIO=' || :OLD.usuario_id_usuario;
-
-        v_valores_new   := 'ID_TAREFA=' || :NEW.id_tarefa || 
-                           '; TITULO=' || :NEW.titulo || 
-                           '; PONTOS=' || :NEW.pontos_tarefa || 
-                           '; STATUS=' || :NEW.status_id_status || 
-                           '; PET=' || :NEW.pet_id_pet || 
-                           '; USUARIO=' || :NEW.usuario_id_usuario;
-
-        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
-        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new);
-
-    ELSIF DELETING THEN
+    ELSE
         v_tipo_operacao := 'DELETE';
-        v_valores_old   := 'ID_TAREFA=' || :OLD.id_tarefa || 
-                           '; TITULO=' || :OLD.titulo || 
-                           '; PONTOS=' || :OLD.pontos_tarefa || 
-                           '; STATUS=' || :OLD.status_id_status || 
-                           '; PET=' || :OLD.pet_id_pet || 
-                           '; USUARIO=' || :OLD.usuario_id_usuario;
-
-        INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
-        VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, NULL);
     END IF;
+
+    INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
+    VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new);
 END trg_audit_tarefa;
 /
 
@@ -352,36 +355,32 @@ END trg_audit_tarefa;
 -- PARTE 4: BATERIA DE TESTES DE INTEGRAÇÃO (PKG_PETGUARDIAN)
 -- ====================================================================
 
-PROMPT ====================================================================;
-PROMPT  TESTES DAS ROTINAS DO PACOTE PKG_PETGUARDIAN (SPRINT 4)
-PROMPT ====================================================================;
-
 -- 1. Teste de Pontuação de Pet Individual (Thor - ID 1)
-PROMPT === TESTE 1: pr_calcular_pontuacao_pet (Thor ID 1) ===;
 DECLARE
     v_tar NUMBER;
     v_aul NUMBER;
     v_tot NUMBER;
 BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 1: pr_calcular_pontuacao_pet ===');
     pkg_petguardian.pr_calcular_pontuacao_pet(1, v_tar, v_aul, v_tot);
     DBMS_OUTPUT.PUT_LINE('Thor (ID 1) -> Tarefas: ' || v_tar || ' | Aulas: ' || v_aul || ' | Total: ' || v_tot);
 END;
 /
 
--- 2. Teste de Pontuação Agregada dos Pets do Usuário (Carlos Silva - ID 1)
-PROMPT === TESTE 2: pr_calcular_pontuacao_usuario (Carlos Silva ID 1) ===;
+-- 2. Teste de Pontuação Agregada e Nível de Gamificação do Usuário (Carlos Silva - ID 1)
 DECLARE
     v_tar_usr NUMBER;
     v_aul_usr NUMBER;
     v_tot_usr NUMBER;
 BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 2: pr_calcular_pontuacao_usuario e fn_obter_nivel_usuario ===');
     pkg_petguardian.pr_calcular_pontuacao_usuario(1, v_tar_usr, v_aul_usr, v_tot_usr);
     DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Tarefas: ' || v_tar_usr || ' | Aulas: ' || v_aul_usr || ' | Total: ' || v_tot_usr);
+    DBMS_OUTPUT.PUT_LINE('Nível de Gamificação (FUNCTION): ' || pkg_petguardian.fn_obter_nivel_usuario(1));
 END;
 /
 
 -- 3. Teste de Resumo da Rede de Cuidado (Carlos Silva - ID 1)
-PROMPT === TESTE 3: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===;
 DECLARE
     v_tot_pets NUMBER;
     v_tot_cuid NUMBER;
@@ -389,6 +388,7 @@ DECLARE
     v_tar_conc NUMBER;
     v_pts_acum NUMBER;
 BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 3: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===');
     pkg_petguardian.pr_obter_resumo_rede_cuidado(1, v_tot_pets, v_tot_cuid, v_tar_pend, v_tar_conc, v_pts_acum);
     DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Pets: ' || v_tot_pets || 
                          ' | Cuidadores: ' || v_tot_cuid || 
@@ -399,16 +399,25 @@ END;
 /
 
 -- 4. Teste de Transferência de Titularidade no Care Circle
-PROMPT === TESTE 4: pr_transferir_responsavel_principal (Thor: Carlos -> Lucas Mendes) ===;
 BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 4: pr_transferir_responsavel_principal ===');
     pkg_petguardian.pr_transferir_responsavel_principal(1, 5);
     DBMS_OUTPUT.PUT_LINE('Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).');
 END;
 /
 
--- 5. Evidências de Auditoria DML Registradas pela Trigger
-PROMPT === TESTE 5: Evidência na Tabela AUDITORIA_DML_TAREFA ===;
-SELECT id_auditoria, nome_usuario, tipo_operacao, data_hora_operacao, valores_novos
+-- 5. Disparo e Evidências da Trigger de Auditoria DML (TRG_AUDIT_TAREFA)
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 5: Disparo da Trigger trg_audit_tarefa na Tabela TAREFA ===');
+    UPDATE tarefa
+       SET status_id_status = 2,
+           conclusao = SYSTIMESTAMP
+     WHERE id_tarefa = 2;
+    DBMS_OUTPUT.PUT_LINE('Tarefa ID 2 atualizada com sucesso. Registro de auditoria gerado pela trigger:');
+END;
+/
+
+SELECT id_auditoria, nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos
   FROM auditoria_dml_tarefa
  ORDER BY id_auditoria ASC;
 

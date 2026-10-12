@@ -150,6 +150,7 @@ CREATE TABLE tarefa (
     status_id_status   NUMBER(3) NOT NULL,
     usuario_id_usuario NUMBER(3) NOT NULL,
     CONSTRAINT tarefa_pk PRIMARY KEY (id_tarefa),
+    CONSTRAINT ck_tarefa_pontos CHECK (pontos_tarefa BETWEEN 0 AND 10),
     CONSTRAINT tarefa_pet_fk FOREIGN KEY (pet_id_pet) REFERENCES pet(id_pet),
     CONSTRAINT tarefa_status_fk FOREIGN KEY (status_id_status) REFERENCES status(id_status),
     CONSTRAINT tarefa_usuario_fk FOREIGN KEY (usuario_id_usuario) REFERENCES usuario(id_usuario)
@@ -309,28 +310,28 @@ INSERT INTO status (id_status, nome_status) VALUES (3, 'EXPIRADO');
 
 -- 11. TAREFA (8 registros com variação de Pet e Status)
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (1, 'Passeio Matinal', 25, 'Caminhada de 40 minutos no parque', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, 1, 2, 1);
+VALUES (1, 'Passeio Matinal', 5, 'Caminhada de 40 minutos no parque', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, 1, 2, 1);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (2, 'Medicamento Antibiótico', 50, 'Administrar 1 comprimido pós-refeição', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 1, 1, 1);
+VALUES (2, 'Medicamento Antibiótico', 10, 'Administrar 1 comprimido pós-refeição', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 1, 1, 1);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (3, 'Escovação de Pelos', 15, 'Remoção de subpelos mortos com rasqueadeira', SYSTIMESTAMP - INTERVAL '3' DAY, SYSTIMESTAMP - INTERVAL '2' DAY, NULL, 1, 3, 5);
+VALUES (3, 'Escovação de Pelos', 3, 'Remoção de subpelos mortos com rasqueadeira', SYSTIMESTAMP - INTERVAL '3' DAY, SYSTIMESTAMP - INTERVAL '2' DAY, NULL, 1, 3, 5);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (4, 'Alimentação Especial', 20, 'Ração sênior com suplementação vitamínica', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 2, 1, 1);
+VALUES (4, 'Alimentação Especial', 4, 'Ração sênior com suplementação vitamínica', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 2, 1, 1);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (5, 'Banho e Higiene Bucal', 60, 'Banho morno com xampu neutro e escovação dental', SYSTIMESTAMP - INTERVAL '4' DAY, SYSTIMESTAMP - INTERVAL '3' DAY, SYSTIMESTAMP - INTERVAL '3' DAY, 2, 2, 1);
+VALUES (5, 'Banho e Higiene Bucal', 8, 'Banho morno com xampu neutro e escovação dental', SYSTIMESTAMP - INTERVAL '4' DAY, SYSTIMESTAMP - INTERVAL '3' DAY, SYSTIMESTAMP - INTERVAL '3' DAY, 2, 2, 1);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (6, 'Corte de Unhas', 30, 'Aparar as pontas das unhas com alicate apropriado', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP + INTERVAL '2' DAY, NULL, 3, 1, 2);
+VALUES (6, 'Corte de Unhas', 5, 'Aparar as pontas das unhas com alicate apropriado', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP + INTERVAL '2' DAY, NULL, 3, 1, 2);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (7, 'Limpeza da Caixa de Areia', 20, 'Higienização completa e troca da sílica', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, 4, 2, 3);
+VALUES (7, 'Limpeza da Caixa de Areia', 4, 'Higienização completa e troca da sílica', SYSTIMESTAMP - INTERVAL '2' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP - INTERVAL '1' DAY, 4, 2, 3);
 
 INSERT INTO tarefa (id_tarefa, titulo, pontos_tarefa, descricao, criacao, prazo, conclusao, pet_id_pet, status_id_status, usuario_id_usuario)
-VALUES (8, 'Estímulo com Varinha', 15, 'Sessão de brincadeiras de caça por 20 minutos', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 5, 1, 4);
+VALUES (8, 'Estímulo com Varinha', 3, 'Sessão de brincadeiras de caça por 20 minutos', SYSTIMESTAMP - INTERVAL '1' DAY, SYSTIMESTAMP + INTERVAL '1' DAY, NULL, 5, 1, 4);
 
 -- 12. TRILHA (5+ registros)
 INSERT INTO trilha (id_trilha, nome, descricao, pet_id_pet) VALUES (1, 'Boas Maneiras Caninas', 'Comandos básicos de obediência e disciplina', 1);

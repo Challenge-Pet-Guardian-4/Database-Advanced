@@ -48,11 +48,18 @@
 <engineerTo>
 <item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
 </engineerTo>
+<constraintName>ck_tarefa_pontos</constraintName>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
 <dataTypePrecision>3</dataTypePrecision>
 <ownDataTypeParameters>,3,</ownDataTypeParameters>
+<listOfRanges>
+<rangeDef class="oracle.dbtools.crest.model.design.constraint.AVT">
+<beginValue>0</beginValue>
+<endValue>10</endValue>
+</rangeDef>
+</listOfRanges>
 </Attribute>
 <Attribute name="descricao" id="E1356B88-A099-3B08-5CC8-731288B7D342">
 <createdBy>Enzo</createdBy>
@@ -147,7 +154,7 @@
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
 <dataTypePrecision>3</dataTypePrecision>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
+<ownDataTypeParameters>,3,</ownDataTypeParameters>
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">

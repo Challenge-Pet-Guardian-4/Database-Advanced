@@ -37,12 +37,19 @@
 <createdTime>2026-10-11 14:01:20 UTC</createdTime>
 <generatorID>17664DED-DCEC-7EF1-2D1D-66B9AC11AC04</generatorID>
 <ownerDesignName>challenge</ownerDesignName>
+<constraintName>ck_tarefa_pontos</constraintName>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT019</logicalDatatype>
 <dataTypePrecision>3</dataTypePrecision>
 <ownDataTypeParameters>,3,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
+<listOfRanges>
+<rangeDef class="oracle.dbtools.crest.model.design.constraint.AVT">
+<beginValue>0</beginValue>
+<endValue>10</endValue>
+</rangeDef>
+</listOfRanges>
 </Column>
 <Column name="descricao" id="4E9838C7-16C3-E14A-1611-BADC1474ABB3">
 <createdBy>Enzo</createdBy>
