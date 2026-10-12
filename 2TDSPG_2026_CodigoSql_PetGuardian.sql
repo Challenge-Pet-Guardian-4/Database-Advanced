@@ -221,6 +221,7 @@ CREATE INDEX idx_usuario_pet_pet ON usuario_pet(pet_id_pet);
 CREATE INDEX idx_tarefa_pet ON tarefa(pet_id_pet);
 CREATE INDEX idx_tarefa_status ON tarefa(status_id_status);
 CREATE INDEX idx_tarefa_usuario ON tarefa(usuario_id_usuario);
+CREATE INDEX idx_tarefa_status_prazo ON tarefa(status_id_status, prazo);
 CREATE INDEX idx_trilha_pet ON trilha(pet_id_pet);
 CREATE INDEX idx_modulo_trilha ON modulo(trilha_id_trilha);
 CREATE INDEX idx_aula_modulo ON aula(modulo_id_modulo);
