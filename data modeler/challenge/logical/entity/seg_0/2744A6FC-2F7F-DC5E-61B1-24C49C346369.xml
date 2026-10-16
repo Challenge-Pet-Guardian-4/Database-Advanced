@@ -84,7 +84,7 @@
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
-<identifier id="AAB19CE7-06A2-728A-9B4D-B83D7761EACE" name="trilha PK">
+<identifier id="AAB19CE7-06A2-728A-9B4D-B83D7761EACE" name="modulo PK">
 <createdBy>lulz_user</createdBy>
 <createdTime>2026-08-23 19:18:06 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
@@ -92,6 +92,7 @@
 <item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
 </engineerTo>
 <pk>true</pk>
+<newElementsIDs>FAA6561A-81FB-6019-6B97-3768DDCEEBD2</newElementsIDs>
 <usedAttributes>
 <attributeRef>FAA6561A-81FB-6019-6B97-3768DDCEEBD2</attributeRef>
 </usedAttributes>

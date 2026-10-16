@@ -58,7 +58,7 @@
 </Attribute>
 </attributes>
 <identifiers itemClass="oracle.dbtools.crest.model.design.logical.CandidateKey">
-<identifier id="439587D9-6F36-064D-8F3B-4B1D252A7B24" name="Cidade PK">
+<identifier id="439587D9-6F36-064D-8F3B-4B1D252A7B24" name="bairro PK">
 <createdBy>Enzo</createdBy>
 <createdTime>2026-05-14 13:53:19 UTC</createdTime>
 <ownerDesignName>challenge</ownerDesignName>
@@ -66,6 +66,7 @@
 <item key="81DBC6C4-9FF9-9888-26C8-0C20068F60E5" value="true"/>
 </engineerTo>
 <pk>true</pk>
+<newElementsIDs>CCBCBA17-75A6-FB8F-3E4B-7F96EDD71374</newElementsIDs>
 <usedAttributes>
 <attributeRef>CCBCBA17-75A6-FB8F-3E4B-7F96EDD71374</attributeRef>
 </usedAttributes>
