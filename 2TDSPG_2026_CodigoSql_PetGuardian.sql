@@ -348,7 +348,7 @@ INSERT INTO modulo (id_modulo, nome, tempo_conclusao, descricao, trilha_id_trilh
 INSERT INTO modulo (id_modulo, nome, tempo_conclusao, descricao, trilha_id_trilha) VALUES (4, 'Brinquedos Recheáveis', '40 min', 'Uso de kong e tapetes de lamber para relaxamento', 3);
 INSERT INTO modulo (id_modulo, nome, tempo_conclusao, descricao, trilha_id_trilha) VALUES (5, 'Instalação de Nichos', '50 min', 'Posicionamento estratégico de prateleiras', 4);
 
--- 14. AULA (5+ registros - sem coluna conteudo)
+-- 14. AULA (6 registros sincronizados com MongoDB NoSQL - sem coluna redundante de conteudo)
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
 VALUES (1, 'Introdução ao Clicker', 'Fundamentos de marcação positiva', 50, 'INICIANTE', 1, 1);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
@@ -359,6 +359,8 @@ INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida,
 VALUES (4, 'Receitas de Enriquecimento', 'Preparo de petiscos congelados saudáveis', 40, 'INICIANTE', 1, 4);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
 VALUES (5, 'Rotas de Fuga e Segurança', 'Evitando que o felino se sinta acuado', 60, 'AVANCADO', 0, 5);
+INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
+VALUES (6, 'Estímulo Olfativo com Catnip e Silvervine', 'Enriquecimento olfativo para felinos domésticos', 50, 'INICIANTE', 1, 5);
 
 -- 15. HISTORICO (5+ registros)
 INSERT INTO historico (id_hist, tipo_hist, data_hist, pet_id_pet) 

@@ -67,6 +67,11 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_id_usuario IN NUMBER
     ) RETURN VARCHAR2;
 
+    -- 1.5 Cálculo do total de tarefas pendentes de um pet específico
+    FUNCTION fn_total_tarefas_pendentes_pet (
+        p_id_pet IN NUMBER
+    ) RETURN NUMBER;
+
     -- ----------------------------------------------------------------
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP (REDUÇÃO DE CÓDIGO JAVA)
     -- ----------------------------------------------------------------
@@ -267,6 +272,37 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RETURN 'BRONZE';
     END fn_obter_nivel_usuario;
 
+    -- 1.5 Cálculo do total de tarefas pendentes de um pet específico
+    FUNCTION fn_total_tarefas_pendentes_pet (
+        p_id_pet IN NUMBER
+    ) RETURN NUMBER IS
+        v_total  NUMBER := 0;
+        v_existe NUMBER := 0;
+    BEGIN
+        IF p_id_pet IS NULL OR p_id_pet <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20018, 'ID do pet invalido.');
+        END IF;
+
+        SELECT COUNT(*) INTO v_existe FROM pet WHERE id_pet = p_id_pet;
+        IF v_existe = 0 THEN
+            RAISE_APPLICATION_ERROR(-20019, 'Pet com ID ' || p_id_pet || ' nao cadastrado.');
+        END IF;
+
+        SELECT COUNT(*)
+          INTO v_total
+          FROM tarefa
+         WHERE pet_id_pet = p_id_pet
+           AND status_id_status = 1; -- 1 = PENDENTE
+
+        RETURN v_total;
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE BETWEEN -20999 AND -20000 THEN
+                RAISE;
+            END IF;
+            RAISE_APPLICATION_ERROR(-20099, 'Erro ao contar tarefas pendentes: ' || SQLERRM);
+    END fn_total_tarefas_pendentes_pet;
+
     -- ----------------------------------------------------------------
     -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
     -- ----------------------------------------------------------------
@@ -421,4 +457,5 @@ SELECT id_auditoria, nome_usuario, tipo_operacao, data_hora_operacao, valores_an
   FROM auditoria_dml_tarefa
  ORDER BY id_auditoria ASC;
 
-COMMIT;
+-- Rollback das operações demonstrativas de teste para preservar o estado limpo das sementes
+ROLLBACK;
