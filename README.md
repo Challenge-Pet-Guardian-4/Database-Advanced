@@ -17,11 +17,12 @@
 
 ## 🔗 Links Oficiais de Entrega
 
-* **Repositório GitHub:** [https://github.com/Challenge-Pet-Guardian-3/Database-Advanced](https://github.com/Challenge-Pet-Guardian-3/Database-Advanced)
+* **Repositório GitHub:** [https://github.com/Challenge-Pet-Guardian-4/Database-Advanced](https://github.com/Challenge-Pet-Guardian-4/Database-Advanced)
 * **Documentação Técnica PDF:** [`2TDSPG_2026_Proj_BD.pdf`](./docs/2TDSPG_2026_Proj_BD.pdf)
 * **Script SQL Principal:** [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql)
 * **Script de Empacotamento PL/SQL (Packages):** [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql)
 * **Scripts NoSQL (MongoDB):** [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js) | [`conteudos_dataset.json`](./conteudos_dataset.json)
+* **Vídeo Demonstrativo da Execução (YouTube):** *[Link do YouTube a ser anexado]*
 
 ---
 
