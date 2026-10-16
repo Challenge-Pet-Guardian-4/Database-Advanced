@@ -265,7 +265,6 @@ Conforme os requisitos da **Sprint 4** (*Mastering Relational and Non-Relational
 * **`pr_calcular_pontuacao_usuario` (Procedure):** Calcula a pontuação total agregada de todos os pets vinculados ao usuário autenticado (utilizado internamente pelo resumo da rede de cuidado).
 * **`pr_obter_resumo_rede_cuidado` (Procedure):** Relatório consolidado da rede de cuidado do usuário (totais de pets, co-cuidadores, tarefas pendentes, tarefas concluídas e pontos acumulados) consumido em `GET /usuarios/me/rede-cuidado`.
 * **`fn_obter_nivel_usuario` (Function):** Função que calcula e retorna a classificação de gamificação do tutor (`'BRONZE'`, `'PRATA'`, `'OURO'`) com base no XP consolidado.
-* **`fn_total_tarefas_pendentes_pet` (Function):** Função utilitária que computa e retorna dinamicamente o número exato de tarefas pendentes (`status = 1`) de um pet específico, com validação de integridade.
 
 ### Seção 2: Operações Transacionais do App (Redução de Código Java & Atomicidade)
 * **`pr_transferir_responsavel_principal` (Procedure):** Transação atômica em `USUARIO_PET` que desmarca a titularidade anterior e promove o novo cuidador principal (`PATCH /pets/{id}/responsavel-principal`).
