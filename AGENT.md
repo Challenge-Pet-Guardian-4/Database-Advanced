@@ -286,7 +286,7 @@ O pacote corporativo `PKG_PETGUARDIAN` centraliza regras de negócio analíticas
   1. Retorna `p_total_pets`: contagem de pets distintos vinculados ao usuário em `USUARIO_PET`.
   2. Retorna `p_total_cuidadores`: contagem de co-cuidadores distintos que compartilham pelo menos um pet com o usuário.
   3. Agregação unificada com contadores condicionais:
-     - `p_tarefas_pendentes`: `NVL(COUNT(CASE WHEN t.status_id_status = 1 AND t.prazo >= SYSTIMESTAMP THEN 1 END), 0)`.
+     - `p_tarefas_pendentes`: `NVL(COUNT(CASE WHEN t.status_id_status = 1 THEN 1 END), 0)`.
      - `p_tarefas_concluidas`: `NVL(COUNT(CASE WHEN t.status_id_status = 2 THEN 1 END), 0)`.
   4. Encapsula chamada a `pr_calcular_pontuacao_usuario` para computar `p_pontos_acumulados`.
 
