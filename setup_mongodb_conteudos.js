@@ -24,8 +24,8 @@ dbTarget.createCollection("conteudos_aula", {
       required: ["aula_id", "tipo_conteudo", "corpo_markdown"],
       properties: {
         aula_id: {
-          bsonType: "int",
-          description: "ID relacional da aula de origem no Oracle (inteiro obrigatório e único)."
+          bsonType: ["int", "long", "string"],
+          description: "ID relacional da aula de origem no Oracle (inteiro/long ou GUID string obrigatório e único)."
         },
         tipo_conteudo: {
           bsonType: "string",
