@@ -1,5 +1,5 @@
 # Database-Advanced — 🐾 PetGuardian
-> Engenharia de Banco de Dados Relacional em 3FN, Empacotamento de Processos em Packages (`PKG_PETGUARDIAN`), Programação Procedural Avançada (Gestão de Care Circle, Pontuação Gamificada, Integração Direta com Backend Java/Spring Boot e Auditoria DML :OLD/:NEW) - Challenge Clyvo 2026 — 2TDSPG.
+> Engenharia de Banco de Dados Relacional em 3FN, Empacotamento de Processos em Packages (`PKG_PETGUARDIAN`), Rotinas de Exportação NoSQL, Persistência Poliglota com MongoDB Atlas e Governança do Care Circle — Challenge Clyvo 2026 — Turma 2TDSPG.
 
 ---
 
@@ -18,15 +18,28 @@
 ## 🔗 Links Oficiais de Entrega
 
 * **Repositório GitHub:** [https://github.com/Challenge-Pet-Guardian-4/Database-Advanced](https://github.com/Challenge-Pet-Guardian-4/Database-Advanced)
-* **Documentação Técnica PDF:** [`2TDSPG_2026_Proj_BD.pdf`](./docs/2TDSPG_2026_Proj_BD.pdf)
-* **Script SQL Principal:** [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql)
-* **Script de Empacotamento PL/SQL (Packages):** [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql)
-* **Scripts NoSQL (MongoDB):** [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js) | [`conteudos_dataset.json`](./conteudos_dataset.json)
+* **Documentação Técnica PDF:** [`Documentação Database Advanced Sprint 4 - Pet Guardian.pdf`](./docs/Documenta%C3%A7%C3%A3o%20Database%20Advanced%20Sprint%204%20-%20Pet%20Guardian.pdf)
+* **Script SQL Relacional (DDL 3FN + Carga de Dados):** [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql)
+* **Script de Empacotamento PL/SQL (Packages Isoladas):** [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql)
+* **Script NoSQL JavaScript (MongoDB Shell / Compass):** [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js)
+* **Dataset de Conteúdos JSON:** [`conteudos_dataset.json`](./conteudos_dataset.json)
 * **Vídeo Demonstrativo da Execução (YouTube):** *[Link do YouTube a ser anexado]*
 
 ---
 
-## Modelagem Lógica e Relacional do Banco de Dados
+## 🎯 Rastreabilidade dos Requisitos da Sprint 4
+
+| Requisito | Descrição Oficial da Sprint 4 | Peso | Onde Encontrar | Status |
+| :--- | :--- | :---: | :--- | :---: |
+| **1. Modelo Relacional Normalizado** | Modelo 3FN coerente com a proposta de valor Clyvo, sem redundâncias e com integridade referencial estrita. | 10 pts | Diagramas em `docs/` e tabelas no [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql) | Concluído |
+| **2. Empacotamento de Processos (Packages)** | Todas as procedures e functions organizadas em pacotes PL/SQL, com controle de transação e tratamento de exceções. | 30 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
+| **3. Exportação do Dataset JSON** | Dataset estruturado em formato JSON (conteúdos das aulas desacoplados da tabela `AULA`) pronto para carga NoSQL. | 20 pts | [`conteudos_dataset.json`](./conteudos_dataset.json) | Concluído |
+| **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleção, validação de schema (`$jsonSchema`), índices e ingestão do dataset. | 30 pts | [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js) | Concluído |
+| **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | Link no README (YouTube) | Em gravação |
+
+---
+
+## 📐 Modelagem Lógica e Relacional do Banco de Dados
 
 ### Modelo Lógico
 ![Modelo Lógico](docs/Logical.png)
@@ -36,251 +49,301 @@
 
 ---
 
-## Contexto da Solução
+## 💡 Contexto da Solução e Decisões de Engenharia
 
-Seguindo as diretrizes estratégicas da **Mentoria Clyvo 2026**, o ecossistema foi completamente refatorado e normalizado em 3FN:
+Seguindo as diretrizes estratégicas da **Mentoria Clyvo 2026**, o ecossistema de dados foi desenhado com base em princípios sólidos de engenharia de software e banco de dados:
 
-1. **Descontinuação do Modelo Clínico Legado:** Foram removidas as entidades legadas de atendimento clínico (`veterinario`, `clinica`, `atendimento`, `tipo_atend`), que desviavam o foco da governança de rotina familiar do animal.
-2. **O Animal no Centro do Domínio (`PET`):** O pet passa a ser a entidade principal do sistema. Todo o histórico de saúde, tarefas e pontuação converge para o indivíduo animal.
-3. **Care Circle Familiar (`USUARIO_PET`):** Suporte à cotutela em relacionamento N:M entre usuários e pets, permitindo múltiplos cuidadores com a identificação clara do responsável principal (`respon_princ`).
-4. **Gamificação da Rotina e Cuidado Preventivo (`TAREFA` e `STATUS`):** Tarefas com ciclo de vida auditável (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`) e acúmulo de pontos de bem-estar.
-5. **Gamificação Educativa (`TRILHA`, `MODULO`, `AULA`):** Módulos temáticos de adestramento e boas práticas vinculados ao perfil do pet, com concessão de pontuação educacional. Conteúdo rico pedagógico transferido para o MongoDB.
-6. **Localização Normalizada (`ENDERECO`, `BAIRRO`, `CIDADE`, `ESTADO`, `TELEFONE`):** Normalização completa de contatos e endereços do tutor (`usuario` possui vínculo 1:N com `endereco`), eliminando tabelas intermediárias redundantes.
+1. **Descontinuação do Modelo Clínico Legado:** Foram eliminadas as tabelas legadas de prontuário veterinário comercial (`veterinario`, `clinica`, `atendimento`, `tipo_atend`), concentrando o domínio na **governança preventiva familiar e na rotina diária**.
+2. **O Animal no Centro do Domínio (`PET`):** O indivíduo animal é a entidade central. Tarefas, histórico preventivo, trilhas educativas e pontuação convergem para ele.
+3. **Care Circle Familiar (`USUARIO_PET`):** Modelagem N:M entre tutores e pets com identificador explícito de tutor titular (`respon_princ = 1`), permitindo cotutela familiar e compartilhamento de rotina.
+4. **Índice Condicional de Titularidade Única:** Garantia física no banco de dados de que cada pet possui no máximo **um** tutor principal ativo:
+   ```sql
+   CREATE UNIQUE INDEX uq_usuario_pet_principal ON usuario_pet (CASE WHEN respon_princ = 1 THEN pet_id_pet END);
+   ```
+5. **Gamificação da Rotina (`TAREFA` e `STATUS`):** Tarefas com pontuação de bem-estar e máquina de estados canônica (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`).
+6. **Gamificação Educativa (`TRILHA`, `MODULO`, `AULA`):** Trilhas de adestramento e enriquecimento ambiental vinculadas ao perfil de espécie e porte do pet.
+7. **Normalização Territorial 3FN (`ENDERECO`, `BAIRRO`, `CIDADE`, `ESTADO`, `TELEFONE`):** Estrutura normalizada sem repetição de cidades ou estados.
+8. **Persistência Poliglota Desacoplada:** O banco relacional Oracle mantém os metadados de progresso e pontuação das aulas (`AULA`), enquanto os conteúdos ricos e pesados em Markdown (com vídeos e PDFs) residem no MongoDB (`conteudos_aula`).
 
 ---
 
-## Dicionário de Dados Oficial (15 Tabelas + Tabela de Auditoria)
+## 📖 Dicionário de Dados Oficial (15 Tabelas + Auditoria)
 
-### 1. Tabela: `USUARIO`
+### 1. `USUARIO`
 Armazena os tutores, cuidadores e administradores da plataforma.
+* `id_usuario` (`NUMBER(3)`, PK): Identificador único do usuário.
+* `nome` (`VARCHAR2(100)`): Nome completo do usuário.
+* `email` (`VARCHAR2(50)`, UN): E-mail corporativo/pessoal único no sistema.
+* `senha` (`VARCHAR2(60)`): Hash criptográfico BCrypt da senha de acesso.
+* `role` (`VARCHAR2(10)`, CK): Perfil de acesso (`'ADMIN'`, `'COMUM'` ou `'PREMIUM'`).
+* `telefone_id_telefone` (`NUMBER(3)`, FK, UN): Vínculo 1:1 com a tabela `telefone`.
+* `endereco_id_endereco` (`NUMBER(3)`, FK): Vínculo com a tabela `endereco` (1:N).
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_usuario` | `NUMBER(3)` | Não | PK | Identificador único do usuário. |
-| `nome` | `VARCHAR2(100)` | Não | - | Nome completo do usuário. |
-| `email` | `VARCHAR2(50)` | Não | UN | E-mail corporativo/pessoal único no sistema. |
-| `senha` | `VARCHAR2(60)` | Não | - | Hash criptográfico da senha de acesso. |
-| `role` | `VARCHAR2(10)` | Não | CK | Perfil de acesso: `'ADMIN'`, `'COMUM'` ou `'PREMIUM'`. |
-| `telefone_id_telefone` | `NUMBER(3)` | Não | FK, UN | Vínculo 1:1 com a tabela `telefone`. |
-| `endereco_id_endereco` | `NUMBER(3)` | Não | FK | Vínculo com a tabela `endereco` (1:N). |
-
----
-
-### 2. Tabela: `TELEFONE`
+### 2. `TELEFONE`
 Contatos telefônicos associados aos usuários do sistema.
+* `id_telefone` (`NUMBER(3)`, PK): Identificador único do telefone.
+* `num_ddd` (`VARCHAR2(2)`): Código DDD de discagem (ex: `'11'`).
+* `num_tel` (`VARCHAR2(9)`): Número do telefone com até 9 dígitos.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_telefone` | `NUMBER(3)` | Não | PK | Identificador único do telefone. |
-| `num_ddd` | `VARCHAR2(2)` | Não | - | DDD do telefone (ex: `'11'`). |
-| `num_tel` | `VARCHAR2(9)` | Não | - | Número do telefone com até 9 dígitos. |
-
----
-
-### 3. Tabela: `PET` (Entidade Nuclear)
+### 3. `PET` (Entidade Nuclear)
 Armazena os animais gerenciados pela plataforma PetGuardian.
+* `id_pet` (`NUMBER(3)`, PK): Identificador único do pet.
+* `nome` (`VARCHAR2(30)`): Nome do pet.
+* `data_nasc` (`DATE`): Data de nascimento para cálculo dinâmico de idade.
+* `sexo` (`VARCHAR2(1)`, CK): Sexo do pet (`'F'` ou `'M'`).
+* `porte` (`VARCHAR2(10)`, CK): Porte do pet (`'GRANDE'`, `'MEDIO'` ou `'PEQUENO'`).
+* `castrado` (`NUMBER`, CK): Indicador binário de castração (`1` = Sim, `0` = Não).
+* `raca_id_raca` (`NUMBER(3)`, FK): Referência para o catálogo de raças.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_pet` | `NUMBER(3)` | Não | PK | Identificador único do pet. |
-| `nome` | `VARCHAR2(30)` | Não | - | Nome do pet. |
-| `data_nasc` | `DATE` | Não | - | Data de nascimento para cálculo dinâmico de idade. |
-| `sexo` | `VARCHAR2(1)` | Não | CK | Sexo do pet (`'F'` ou `'M'`). |
-| `porte` | `VARCHAR2(10)` | Não | CK | Porte do pet: `'GRANDE'`, `'MEDIO'` ou `'PEQUENO'`. |
-| `castrado` | `NUMBER` | Não | CK | Indicador binário de castração (`1` = Sim, `0` = Não). |
-| `raca_id_raca` | `NUMBER(3)` | Não | FK | Referência para a raça do pet. |
-
----
-
-### 4. Tabela: `USUARIO_PET` (Care Circle N:M)
+### 4. `USUARIO_PET` (Care Circle N:M)
 Tabela associativa que formaliza a rede de cotutela sobre cada animal.
+* `usuario_id_usuario` (`NUMBER(3)`, PK, FK): Referência ao usuário tutor.
+* `pet_id_pet` (`NUMBER(3)`, PK, FK): Referência ao pet tutelado.
+* `respon_princ` (`NUMBER`, CK): `1` se for o tutor titular principal, `0` se for co-cuidador.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `usuario_id_usuario` | `NUMBER(3)` | Não | PK, FK | Referência ao usuário tutor. |
-| `pet_id_pet` | `NUMBER(3)` | Não | PK, FK | Referência ao pet cuidado. |
-| `respon_princ` | `NUMBER` | Não | CK | `1` se for o tutor principal, `0` se for co-cuidador. |
+### 5. `RACA`
+Catálogo de raças caninas e felinas.
+* `id_raca` (`NUMBER(3)`, PK): Identificador único da raça.
+* `nome_raca` (`VARCHAR2(30)`): Nome descritivo da raça (ex: `'Golden Retriever'`).
 
----
-
-### 5. Tabela: `RACA`
-Catálogo de raças caninas e felinas cadastradas.
-
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_raca` | `NUMBER(3)` | Não | PK | Identificador único da raça. |
-| `nome_raca` | `VARCHAR2(30)` | Não | - | Nome descritivo da raça (ex: `'Golden Retriever'`). |
-
----
-
-### 6. Tabela: `TAREFA` (Tabela de Fatos da Rotina)
+### 6. `TAREFA` (Tabela de Fatos da Rotina)
 Fatos transacionais de alimentação, medicação, passeios e cuidados de saúde.
+* `id_tarefa` (`NUMBER(3)`, PK): Identificador único da tarefa.
+* `titulo` (`VARCHAR2(30)`): Título descritivo da tarefa.
+* `pontos_tarefa` (`NUMBER(3)`): Pontos de bem-estar creditados ao concluir a tarefa.
+* `descricao` (`VARCHAR2(200)`): Orientações operacionais de execução.
+* `criacao` (`TIMESTAMP`): Data/hora de agendamento da tarefa.
+* `prazo` (`TIMESTAMP`): Data/hora limite de execução.
+* `conclusao` (`TIMESTAMP`, NULL): Data/hora real de conclusão.
+* `pet_id_pet` (`NUMBER(3)`, FK): Pet beneficiado pela tarefa.
+* `status_id_status` (`NUMBER(3)`, FK): Status atual de controle.
+* `usuario_id_usuario` (`NUMBER(3)`, FK): Cuidador responsável pela execução.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_tarefa` | `NUMBER(3)` | Não | PK | Identificador único da tarefa. |
-| `titulo` | `VARCHAR2(30)` | Não | - | Título descritivo da tarefa. |
-| `pontos_tarefa` | `NUMBER(3)` | Não | - | Pontos de bem-estar creditados ao cumprir a tarefa. |
-| `descricao` | `VARCHAR2(200)` | Não | - | Orientações detalhadas de execução. |
-| `criacao` | `TIMESTAMP` | Não | - | Data/hora de registro da tarefa. |
-| `prazo` | `TIMESTAMP` | Não | - | Data/hora limite de execução. |
-| `conclusao` | `TIMESTAMP` | Sim | - | Data/hora em que a tarefa foi cumprida. |
-| `pet_id_pet` | `NUMBER(3)` | Não | FK | Pet beneficiado pela tarefa. |
-| `status_id_status` | `NUMBER(3)` | Não | FK | Status de controle (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`). |
-| `usuario_id_usuario` | `NUMBER(3)` | Não | FK | Cuidador responsável pela execução. |
-
----
-
-### 7. Tabela: `STATUS`
+### 7. `STATUS` (Domínio Fechado / State Machine)
 Domínio canônico de estados do ciclo de vida das tarefas.
+* `id_status` (`NUMBER(3)`, PK): Identificador do status.
+* `nome_status` (`VARCHAR2(15)`, CK): Restrição canônica: `'PENDENTE'` (1), `'CONCLUIDO'` (2), `'EXPIRADO'` (3).
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_status` | `NUMBER(3)` | Não | PK | Identificador do status. |
-| `nome_status` | `VARCHAR2(15)` | Não | CK | Restrição: `'CONCLUIDO'`, `'EXPIRADO'` ou `'PENDENTE'`. |
-
-> **📌 Nota Arquitetural (Domínio Fechado / Finite State Machine):**  
-> A tabela `STATUS` é restrita aos 3 estados canônicos do sistema (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`), validados pela constraint `ck_status_nome`.
-
----
-
-### 8. Tabela: `TRILHA`
+### 8. `TRILHA`
 Trilhas temáticas de educação, adestramento e enriquecimento ambiental.
+* `id_trilha` (`NUMBER(5)`, PK): Identificador único da trilha.
+* `nome` (`VARCHAR2(30)`): Nome da trilha temática.
+* `descricao` (`VARCHAR2(200)`): Detalhamento dos objetivos pedagógicos.
+* `pet_id_pet` (`NUMBER(3)`, FK): Pet associado ao plano educativo.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_trilha` | `NUMBER(5)` | Não | PK | Identificador único da trilha. |
-| `nome` | `VARCHAR2(30)` | Não | - | Nome da trilha temática. |
-| `descricao` | `VARCHAR2(200)` | Não | - | Detalhamento dos objetivos pedagógicos. |
-| `pet_id_pet` | `NUMBER(3)` | Não | FK | Pet associado ao plano de desenvolvimento. |
-
----
-
-### 9. Tabela: `MODULO`
+### 9. `MODULO`
 Módulos que segmentam o conteúdo programático de uma trilha.
+* `id_modulo` (`NUMBER(5)`, PK): Identificador único do módulo.
+* `nome` (`VARCHAR2(50)`): Título do módulo pedagógico.
+* `tempo_conclusao` (`VARCHAR2(10)`): Estimativa de tempo (ex: `'45 min'`).
+* `descricao` (`VARCHAR2(100)`): Resumo dos tópicos abordados.
+* `trilha_id_trilha` (`NUMBER(5)`, FK): Referência para a trilha pai.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_modulo` | `NUMBER(5)` | Não | PK | Identificador único do módulo. |
-| `nome` | `VARCHAR2(50)` | Não | - | Título do módulo. |
-| `tempo_conclusao` | `VARCHAR2(10)` | Não | - | Estimativa de tempo de conclusão (ex: `'45 min'`). |
-| `descricao` | `VARCHAR2(100)` | Não | - | Resumo do conteúdo trabalhado no módulo. |
-| `trilha_id_trilha` | `NUMBER(5)` | Não | FK | Referência para a trilha pai. |
-
----
-
-### 10. Tabela: `AULA`
+### 10. `AULA` (Relacional)
 Aulas práticas com pontuação educativa e acompanhamento de progresso.
+* `id_aula` (`NUMBER(5)`, PK): Identificador único da aula.
+* `nome` (`VARCHAR2(50)`): Título da lição.
+* `descricao` (`VARCHAR2(100)`): Descrição curta do objetivo.
+* `pontos_aula` (`NUMBER(5)`): Pontuação concedida ao pet/tutor ao concluir.
+* `dificuldade` (`VARCHAR2(20)`): Nível de dificuldade (`INICIANTE`, `INTERMEDIARIO`, `AVANCADO`).
+* `concluida` (`NUMBER`, CK): `1` se concluída, `0` se pendente.
+* `modulo_id_modulo` (`NUMBER(5)`, FK): Referência para o módulo pai.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_aula` | `NUMBER(5)` | Não | PK | Identificador único da aula. |
-| `nome` | `VARCHAR2(50)` | Não | - | Título da lição. |
-| `descricao` | `VARCHAR2(100)` | Não | - | Descrição curta da prática. |
-| `pontos_aula` | `NUMBER(5)` | Não | - | Pontuação concedida ao pet/tutor ao concluir. |
-| `dificuldade` | `VARCHAR2(20)` | Não | - | Nível de dificuldade (`INICIANTE`, `INTERMEDIARIO`, `AVANCADO`). |
-| `concluida` | `NUMBER` | Não | CK | `1` se concluída, `0` se pendente. |
-| `modulo_id_modulo` | `NUMBER(5)` | Não | FK | Referência para o módulo pai. |
-
-> **Nota NoSQL:** O conteúdo instrutivo detalhado (`conteudos_aula`) foi desacoplado para a coleção NoSQL no MongoDB, preservando a performance relacional.
-
----
-
-### 11. Tabela: `HISTORICO`
+### 11. `HISTORICO`
 Prontuário de eventos de saúde e intervenções preventivas do animal.
+* `id_hist` (`NUMBER(3)`, PK): Identificador do evento histórico.
+* `tipo_hist` (`VARCHAR2(30)`): Categoria do evento (Vacina, Check-up, Limpeza de Tártaro).
+* `data_hist` (`TIMESTAMP`): Data e hora exata do evento de saúde.
+* `pet_id_pet` (`NUMBER(3)`, FK): Pet vinculado ao histórico.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_hist` | `NUMBER(3)` | Não | PK | Identificador do evento histórico. |
-| `tipo_hist` | `VARCHAR2(30)` | Não | - | Categoria do evento (Vacina, Check-up, Cirurgia). |
-| `data_hist` | `TIMESTAMP` | Não | - | Data e hora exata do evento de saúde. |
-| `pet_id_pet` | `NUMBER(3)` | Não | FK | Pet vinculado ao histórico. |
+### 12. `ENDERECO`
+Logradouros físicos normalizados vinculados diretamente aos usuários (1:N).
+* `id_endereco` (`NUMBER(3)`, PK): Identificador único do endereço.
+* `cep` (`VARCHAR2(8)`): Código postal de 8 posições.
+* `rua` (`VARCHAR2(150)`): Nome do logradouro.
+* `numero` (`VARCHAR2(5)`): Número predial.
+* `bairro_id_bairro` (`NUMBER(3)`, FK): Referência para a tabela `bairro`.
 
----
+### 13. `BAIRRO`
+Divisão territorial urbana (3FN).
+* `id_bairro` (`NUMBER(3)`, PK): Identificador único do bairro.
+* `nome_bairro` (`VARCHAR2(30)`): Nome descritivo do bairro.
+* `cidade_id_cidade` (`NUMBER(3)`, FK): Referência para a tabela `cidade`.
 
-### 12. Tabela: `ENDERECO`
-Logradouros físicos normalizados vinculados diretamente aos usuários.
-
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_endereco` | `NUMBER(3)` | Não | PK | Identificador único do endereço. |
-| `cep` | `VARCHAR2(8)` | Não | - | Código postal numérico de 8 posições. |
-| `rua` | `VARCHAR2(150)` | Não | - | Logradouro (rua, avenida, travessa). |
-| `numero` | `VARCHAR2(5)` | Não | - | Número predial. |
-| `bairro_id_bairro` | `NUMBER(3)` | Não | FK | Referência para a tabela `bairro`. |
-
----
-
-### 13. Tabela: `BAIRRO`
-Divisão territorial urbana normalizada (3FN).
-
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_bairro` | `NUMBER(3)` | Não | PK | Identificador único do bairro. |
-| `nome_bairro` | `VARCHAR2(30)` | Não | - | Nome descritivo do bairro. |
-| `cidade_id_cidade` | `NUMBER(3)` | Não | FK | Referência para a tabela `cidade`. |
-
----
-
-### 14. Tabela: `CIDADE`
+### 14. `CIDADE`
 Municípios cadastrados (3FN).
+* `id_cidade` (`NUMBER(3)`, PK): Identificador único da cidade.
+* `nome_cidade` (`VARCHAR2(30)`): Nome do município.
+* `estado_id_estado` (`NUMBER(3)`, FK): Referência para a tabela `estado`.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_cidade` | `NUMBER(3)` | Não | PK | Identificador único da cidade. |
-| `nome_cidade` | `VARCHAR2(30)` | Não | - | Nome do município. |
-| `estado_id_estado` | `NUMBER(3)` | Não | FK | Referência para a tabela `estado`. |
-
----
-
-### 15. Tabela: `ESTADO`
+### 15. `ESTADO`
 Unidades Federativas brasileiras (3FN).
+* `id_estado` (`NUMBER(3)`, PK): Identificador único do estado.
+* `nome_estado` (`VARCHAR2(30)`): Nome por extenso do estado.
 
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_estado` | `NUMBER(3)` | Não | PK | Identificador único do estado. |
-| `nome_estado` | `VARCHAR2(30)` | Não | - | Nome por extenso da Unidade Federativa. |
-
----
-
-### 16. Tabela: `AUDITORIA_DML_TAREFA`
+### 16. `AUDITORIA_DML_TAREFA`
 Estrutura dedicada à rastreabilidade transacional da tabela de fatos `TAREFA`.
-
-| Coluna | Tipo de Dados | Nulo? | Chave | Descrição / Regra |
-| :--- | :--- | :---: | :---: | :--- |
-| `id_auditoria` | `NUMBER` | Não | PK | Identificador autoincremental (`IDENTITY`). |
-| `nome_usuario` | `VARCHAR2(50)` | Não | - | Nome do usuário de banco conectado (`USER`). |
-| `tipo_operacao` | `VARCHAR2(10)` | Não | - | Operação disparada: `'INSERT'`, `'UPDATE'` ou `'DELETE'`. |
-| `data_hora_operacao` | `TIMESTAMP` | Não | - | Timestamp da transação (`SYSTIMESTAMP`). |
-| `valores_anteriores` | `VARCHAR2(4000)` | Sim | - | Estado completo dos campos `:OLD` da linha. |
-| `valores_novos` | `VARCHAR2(4000)` | Sim | - | Estado completo dos campos `:NEW` da linha. |
+* `id_auditoria` (`NUMBER`, PK): Identificador sequencial (`IDENTITY`).
+* `nome_usuario` (`VARCHAR2(50)`): Usuário de banco de dados conectado (`USER`).
+* `tipo_operacao` (`VARCHAR2(10)`): Operação disparada: `'INSERT'`, `'UPDATE'` ou `'DELETE'`.
+* `data_hora_operacao` (`TIMESTAMP`): Timestamp da transação (`SYSTIMESTAMP`).
+* `valores_anteriores` (`VARCHAR2(4000)`, NULL): Estado completo dos campos `:OLD`.
+* `valores_novos` (`VARCHAR2(4000)`, NULL): Estado completo dos campos `:NEW`.
 
 ---
 
-## Empacotamento de Processos PL/SQL: `PKG_PETGUARDIAN`
+## ⚡ Índices Secundários e Performance (14 Índices + 1 Condicional)
 
-Conforme os requisitos da **Sprint 4** (*Mastering Relational and Non-Relational Database*), todas as rotinas procedurais estão modularizadas e encapsuladas no pacote corporativo **`PKG_PETGUARDIAN`**, organizadas com foco de negócio em **Pontos do Pet**, rede de tutela **`USUARIO_PET`** e **operações transacionais reais** consumidas diretamente pelo backend Java/Spring Boot:
+Para mitigar **table locks em operações DML concorrentes**, otimizar planos de execução em `JOIN`s relacionais e acelerar filtros de agregação de dashboards, foram implementados:
+
+| Nome do Índice | Tabela Alvo | Colunas Indexadas | Finalidade Técnica |
+| :--- | :--- | :--- | :--- |
+| `idx_cidade_estado` | `CIDADE` | `estado_id_estado` | Previne table lock na FK de Estado |
+| `idx_bairro_cidade` | `BAIRRO` | `cidade_id_cidade` | Previne table lock na FK de Cidade |
+| `idx_endereco_bairro` | `ENDERECO` | `bairro_id_bairro` | Previne table lock na FK de Bairro |
+| `idx_usuario_endereco` | `USUARIO` | `endereco_id_endereco` | Otimiza busca de endereço do tutor |
+| `idx_pet_raca` | `PET` | `raca_id_raca` | Acelera filtragem por raça/espécie |
+| `idx_usuario_pet_pet` | `USUARIO_PET` | `pet_id_pet` | Otimiza listagem reversa do Care Circle |
+| `idx_tarefa_pet` | `TAREFA` | `pet_id_pet` | Acelera cálculo de score e tarefas do pet |
+| `idx_tarefa_status` | `TAREFA` | `status_id_status` | Otimiza relatórios de tarefas por status |
+| `idx_tarefa_usuario` | `TAREFA` | `usuario_id_usuario` | Acelera listagem de tarefas por cuidador |
+| `idx_tarefa_status_prazo`| `TAREFA` | `(status_id_status, prazo)` | Otimiza job de expiração e contagem pendente |
+| `idx_trilha_pet` | `TRILHA` | `pet_id_pet` | Otimiza navegação de trilhas ativas do pet |
+| `idx_modulo_trilha` | `MODULO` | `trilha_id_trilha` | Previne table lock na hierarquia de módulos |
+| `idx_aula_modulo` | `AULA` | `modulo_id_modulo` | Previne table lock na listagem de aulas |
+| `idx_historico_pet` | `HISTORICO` | `pet_id_pet` | Acelera busca de prontuário clínico |
+| **`uq_usuario_pet_principal`** | **`USUARIO_PET`** | `(CASE WHEN respon_princ = 1 THEN pet_id_pet END)` | **Garante unicidade estrita do titular principal** |
+
+---
+
+## 📦 Empacotamento de Processos PL/SQL: `PKG_PETGUARDIAN`
+
+Conforme os requisitos da **Sprint 4**, todas as rotinas procedurais estão encapsuladas no pacote corporativo **`PKG_PETGUARDIAN`**:
 
 ### Seção 1: Pontuação Gamificada de Pets e Tutores (Score de Bem-Estar)
-* **`pr_calcular_pontuacao_pet` (Procedure):** Calcula os pontos consolidados de tarefas e aulas concluídas do pet individual (`GET /pets/{id}/pontos`).
-* **`pr_calcular_pontuacao_usuario` (Procedure):** Calcula a pontuação total agregada de todos os pets vinculados ao usuário autenticado (utilizado internamente pelo resumo da rede de cuidado).
-* **`pr_obter_resumo_rede_cuidado` (Procedure):** Relatório consolidado da rede de cuidado do usuário (totais de pets, co-cuidadores, tarefas pendentes, tarefas concluídas e pontos acumulados) consumido em `GET /usuarios/me/rede-cuidado`.
-* **`fn_obter_nivel_usuario` (Function):** Função que calcula e retorna a classificação de gamificação do tutor (`'BRONZE'`, `'PRATA'`, `'OURO'`) com base no XP consolidado.
+* **`pr_calcular_pontuacao_pet` (Procedure):**  
+  Calcula os pontos consolidados de tarefas e aulas concluídas do pet individual.  
+  *Consumo Java/App:* `GET /pets/{id}/pontos`
+* **`pr_calcular_pontuacao_usuario` (Procedure):**  
+  Calcula a pontuação agregada de todos os pets sob tutela do usuário autenticado.
+* **`pr_obter_resumo_rede_cuidado` (Procedure):**  
+  Gera o relatório consolidado da rede de cuidado do usuário em uma única chamada: total de pets, total de cuidadores, tarefas pendentes, tarefas concluídas e pontos acumulados.  
+  *Consumo Java/App:* `GET /usuarios/me/rede-cuidado`
+* **`fn_obter_nivel_usuario` (Function):**  
+  Classifica o nível de gamificação do tutor com base no XP acumulado:
+  * `0` a `50 pts`  ➜ **`BRONZE`**
+  * `51` a `150 pts` ➜ **`PRATA`**
+  * `151+ pts`       ➜ **`OURO`**
 
-### Seção 2: Operações Transacionais do App (Redução de Código Java & Atomicidade)
-* **`pr_transferir_responsavel_principal` (Procedure):** Transação atômica em `USUARIO_PET` que desmarca a titularidade anterior e promove o novo cuidador principal (`PATCH /pets/{id}/responsavel-principal`).
+### Seção 2: Operações Transacionais do Care Circle
+* **`pr_transferir_responsavel_principal` (Procedure):**  
+  Transação atômica que garante a transferência de titularidade sobre o pet sem permitir estados intermediários inconsistentes ou múltiplos titulares, utilizando atualização condicional em instrução única.  
+  *Consumo Java/App:* `PATCH /pets/{id}/responsavel-principal`
 
 ### Seção 3: Auditoria DML em Tabela
-* **`trg_audit_tarefa` (Trigger):** No padrão arquitetural do Oracle Database, gatilhos são objetos vinculados diretamente à tabela (`tarefa`). Esta trigger é disparada automaticamente após `INSERT`, `UPDATE` ou `DELETE`, registrando a trilha de auditoria completa com dados `:OLD` e `:NEW` em `AUDITORIA_DML_TAREFA`.
+* **`trg_audit_tarefa` (Trigger):**  
+  Trigger de linha (`FOR EACH ROW`) disparada automaticamente após `INSERT`, `UPDATE` ou `DELETE` na tabela `TAREFA`. Registra o usuário Oracle (`USER`), tipo de operação, data/hora e serialização completa de `:OLD` e `:NEW` na tabela `AUDITORIA_DML_TAREFA`.
+
+### Tabela de Tratamento de Exceções Padronizadas
+
+| Código ORA | Identificador PL/SQL | Descrição / Causa Raiz |
+| :---: | :--- | :--- |
+| `-20018` | `e_id_invalido` | Identificador nulo, negativo ou zerado passado como argumento. |
+| `-20019` | `e_pet_inexistente` | Pet não localizado na base relacional para o ID informado. |
+| `-20020` | Genérico Pet Score | Falha inesperada durante a agregação de pontos do pet. |
+| `-20022` | `e_usuario_inexistente` | Usuário não localizado na base relacional para o ID informado. |
+| `-20023` | Genérico User Score | Falha inesperada durante a agregação de pontos do usuário. |
+| `-20024` | Genérico Care Circle | Falha inesperada ao consolidar métricas da rede de cuidado. |
+| `-20041` | `e_vinculo_inexistente` | Novo responsável não possui vínculo prévio com o animal em `USUARIO_PET`. |
+| `-20042` | Genérico Transferência | Erro durante a transferência de responsabilidade principal. |
 
 ---
 
-## 🍃 Persistência Poliglota & Carga NoSQL (MongoDB Atlas)
+## 🍃 Persistência Poliglota & Coleção MongoDB (`conteudos_aula`)
 
-O ecossistema implementa persistência poliglota desacoplada:
-1. **Oracle Database 19c (Relacional em 3FN):** Armazena entidades estruturadas com integridade referencial estrita (`PET`, `USUARIO`, `TAREFA`, `HISTORICO`, `TRILHA`, `MODULO`, `AULA`).
-2. **Dataset Exportado em JSON (`conteudos_dataset.json`):** Dataset estructurado contendo 6 documentos pedagógicos ricos associados às aulas relacionais (`aula_id: 1` a `6`), formatados em Markdown extenso com links de vídeos e PDFs.
-3. **Script de Importação MongoDB (`setup_mongodb_conteudos.js`):** Script autônomo e idempotente executado via `mongosh` ou Node.js que:
-   - Valida o schema da coleção `conteudos_aula` via **JSON Schema Validator** do MongoDB;
-   - Cria índice único em `aula_id` e índice de busca textual em `corpo_markdown`;
-   - Realiza a **leitura dinâmica e ingestão direta do arquivo `conteudos_dataset.json`** via sistema de arquivos (`fs.readFileSync`), com fallback de segurança.
+Para garantir alta performance e escalabilidade, o sistema adota arquitetura poliglota:
+* **Oracle Database 19c:** Integridade relacional em 3FN, transações financeiras/cadastrais e gamificação de tarefas.
+* **MongoDB Atlas NoSQL:** Armazenamento flexível e sem restrição de tamanho de conteúdos didáticos em formato Markdown com links multimídia (PDFs, vídeos).
+
+### Schema do Documento NoSQL (`conteudos_aula`)
+
+```json
+{
+  "_id": "ObjectId('...')",
+  "aula_id": 1,
+  "tipo_conteudo": "PASSO_A_PASSO",
+  "corpo_markdown": "# Introdução ao Clicker\n\nFundamentos de marcação positiva...",
+  "links_recursos": [
+    "https://www.akc.org/expert-advice/training/clicker-training-your-dog-mark-and-reward/",
+    "https://en.wikipedia.org/wiki/Clicker_training"
+  ],
+  "atualizado_em": "2026-10-08T18:00:00Z"
+}
+```
+
+### Índices Criados no MongoDB
+1. **`idx_aula_id_unique`** (`{ "aula_id": 1 }`, `unique: true`): Garante idempotência e unicidade lógica com a chave da aula no Oracle.
+2. **`idx_busca_textual_conteudo`** (`{ "corpo_markdown": "text" }`): Permite buscas textuais rápidas por palavras-chave em todo o material pedagógico.
+3. **`idx_tipo_conteudo`** (`{ "tipo_conteudo": 1 }`): Otimiza filtros por categoria (`ARTIGO`, `VIDEO`, `PASSO_A_PASSO`).
+
+---
+
+## 🚀 Guia Passo a Passo de Execução
+
+### Opção 1: Execução no Oracle Database (SQL Developer / SQLcl / VS Code)
+
+A execução no banco relacional é dividida em 2 passos modulares, respeitando a separação entre DDL/DML e objetos procedurais (Packages/Triggers):
+
+1. **Passo 1 — Carga DDL e Sementes (Entregável 1):**
+   * Abra e execute o arquivo [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql).
+   * Ele remove objetos preexistentes (`DROP TABLE`), cria as 15 tabelas normalizadas em 3FN + tabela de auditoria, adiciona constraints, cria os 14 índices secundários + índice condicional e realiza a carga dos dados iniciais válidos com `COMMIT`.
+2. **Passo 2 — Empacotamento PL/SQL e Testes (Entregável 2):**
+   * Abra e execute o arquivo [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql).
+   * Ele compila a especificação e o corpo do pacote **`PKG_PETGUARDIAN`**, compila a trigger de auditoria **`TRG_AUDIT_TAREFA`** e dispara a **Bateria de Testes de Integração (Testes 1 a 5)** com saída no `DBMS_OUTPUT` e rollback limpo.
+
+---
+
+### Opção 2: Carga do MongoDB via MongoDB Compass (Interface Gráfica)
+
+1. Abra o **MongoDB Compass** e conecte-se ao cluster (Atlas ou local).
+2. Na barra inferior da janela do Compass, clique na aba **`>_MONGOSH`**.
+3. Copie todo o conteúdo do arquivo [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js), cole no terminal `mongosh` e pressione **Enter**.
+4. Ou, se estiver na mesma pasta:
+   ```javascript
+   load("setup_mongodb_conteudos.js")
+   ```
+5. O console exibirá a criação da coleção com validação de schema, os índices criados e os 6 documentos inseridos.
+
+---
+
+### Opção 3: Carga do MongoDB via Linha de Comando (`mongosh`)
+
+Execute no terminal:
+```bash
+mongosh "mongodb+srv://<usuario>:<senha>@cluster0.p7100.mongodb.net/petguardian" setup_mongodb_conteudos.js
+```
+
+---
+
+## 🧪 Evidências de Teste da `PKG_PETGUARDIAN`
+
+Ao executar o bloco de testes incluído no final de [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql), a saída obtida no `DBMS_OUTPUT` valida todos os cenários:
+
+```text
+=== TESTE 1: pr_calcular_pontuacao_pet ===
+Thor (ID 1) -> Tarefas: 5 | Aulas: 120 | Total: 125
+
+=== TESTE 2: pr_calcular_pontuacao_usuario e fn_obter_nivel_usuario ===
+Carlos Silva (ID 1) -> Tarefas: 13 | Aulas: 120 | Total: 133
+Nível de Gamificação (FUNCTION): PRATA
+
+=== TESTE 3: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===
+Carlos Silva (ID 1) -> Pets: 2 | Cuidadores: 1 | Tarefas Pendentes: 2 | Tarefas Concluídas: 2 | Pontos Acumulados: 133
+
+=== TESTE 4: pr_transferir_responsavel_principal ===
+Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).
+
+=== TESTE 5: Disparo da Trigger trg_audit_tarefa na Tabela TAREFA ===
+Tarefa ID 2 atualizada com sucesso. Registro de auditoria gerado pela trigger:
+ID_AUDITORIA: 1 | USUARIO: RM561432 | OPERACAO: UPDATE | VALORES_OLD: ID_TAREFA=2... | VALORES_NEW: ID_TAREFA=2; STATUS=2...
+```

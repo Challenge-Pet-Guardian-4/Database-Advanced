@@ -279,12 +279,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20018, 'ID do pet e do novo responsável não podem ser nulos ou inválidos.');
         END IF;
 
-        -- Valida se o novo responsável já faz parte do Care Circle do pet com trava FOR UPDATE
+        -- Valida se o novo responsável já faz parte do Care Circle do pet
         SELECT COUNT(1) INTO v_existe_vinculo
           FROM usuario_pet up
          WHERE up.pet_id_pet = p_id_pet
-           AND up.usuario_id_usuario = p_novo_id_usuario
-           FOR UPDATE;
+           AND up.usuario_id_usuario = p_novo_id_usuario;
 
         IF v_existe_vinculo = 0 THEN
             RAISE_APPLICATION_ERROR(-20041, 'O novo responsável (id ' || p_novo_id_usuario || ') não está vinculado ao pet ' || p_id_pet || ' em USUARIO_PET.');
