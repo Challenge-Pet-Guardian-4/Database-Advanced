@@ -34,10 +34,10 @@
 
 | Requisito | Descrição Oficial da Sprint 4 | Peso | Onde Encontrar | Status |
 | :--- | :--- | :---: | :--- | :---: |
-| **1. Modelo Relacional Normalizado** | Modelo 3FN coerente com a proposta de valor Clyvo, sem redundâncias e com integridade referencial estrita. | 10 pts | Diagramas em `docs/` e tabelas no [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql) | Concluído |
-| **2. Empacotamento de Processos (Packages)** | Todas as procedures e functions organizadas em pacotes PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções. | 30 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
+| **1. Modelo Relacional Normalizado** | Modelo 3FN coerente com a proposta de valor Clyvo, sem redundâncias e com integridade referencial estrita. | 20 pts | Diagramas em `docs/` e tabelas no [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql) | Concluído |
+| **2. Empacotamento de Processos (Packages)** | Todas as procedures e functions organizadas em pacotes PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções. | 25 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
 | **3. Exportação do Dataset JSON** | Procedimento em pacote PL/SQL (`pr_exportar_aulas_json`) e dataset estruturado em JSON exportado a partir de dados reais de `AULA`. | 20 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) e [`mongodb/aulas_dataset.json`](./mongodb/aulas_dataset.json) | Concluído |
-| **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleções (`aulas` e `conteudos_aula`), validação de schema (`$jsonSchema`), índices e ingestão dos datasets. | 30 pts | [`mongodb/setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js) e [`mongodb/setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js) | Concluído |
+| **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleções (`aulas` e `conteudos_aula`), validação de schema (`$jsonSchema`), índices e ingestão dos datasets. | 25 pts | [`mongodb/setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js) e [`mongodb/setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js) | Concluído |
 | **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | Link no README (YouTube) | Em gravação |
 
 ---
@@ -113,9 +113,11 @@ A package centraliza todas as regras de negócio analíticas, gamificadas e tran
 | `-20022` | `e_usuario_inexistente` | Usuário não localizado na base relacional para o ID informado. |
 | `-20023` | Genérico User Score | Falha inesperada durante a agregação de pontos do usuário. |
 | `-20024` | Genérico Care Circle | Falha inesperada ao consolidar métricas da rede de cuidado. |
+| `-20025` | Genérico User Level | Erro inesperado ao classificar o nível de gamificação do usuário (`fn_obter_nivel_usuario`). |
 | `-20041` | `e_vinculo_inexistente` | Novo responsável não possui vínculo prévio com o animal em `USUARIO_PET`. |
 | `-20042` | Genérico Transferência | Erro durante a transferência de responsabilidade principal. |
 | `-20043` | Genérico Auditoria | Erro durante a gravação de log de auditoria da tarefa. |
+| `-20044` | Genérico Exportação JSON | Erro durante a extração e serialização do dataset JSON de aulas (`pr_exportar_aulas_json`). |
 
 ---
 
@@ -124,7 +126,7 @@ A package centraliza todas as regras de negócio analíticas, gamificadas e tran
 O banco `petguardian` no MongoDB Atlas opera com duas coleções complementares:
 
 ### 1. Coleção `aulas` (Metadados Relacionais Exportados)
-Originada da exportação direta da tabela `AULA` do Oracle 19c (`exportar_aulas_relacionais.sql` ➜ `aulas_dataset.json`):
+Originada da exportação direta da tabela `AULA` do Oracle 19c (`PKG_PETGUARDIAN.pr_exportar_aulas_json` em `sprint4_pkg_petguardian.sql` ➜ `mongodb/aulas_dataset.json`):
 
 ```json
 {
@@ -202,8 +204,9 @@ mongosh "mongodb+srv://<usuario>:<senha>@cluster0.p7100.mongodb.net/petguardian"
 
 Ou no **MongoDB Compass**:
 1. Conecte ao cluster e abra a aba inferior **`>_MONGOSH`**.
-2. Abra a pasta `mongodb` e execute:
+2. Aponte para a pasta `mongodb/` e execute os scripts:
    ```javascript
+   process.chdir("<caminho_do_repositorio>/Database-Advanced/mongodb")
    load("setup_mongodb_aulas.js")
    load("setup_mongodb_conteudos.js")
    ```

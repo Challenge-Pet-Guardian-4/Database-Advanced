@@ -290,6 +290,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         ELSE
             RETURN 'OURO';
         END IF;
+    EXCEPTION
+        WHEN e_id_invalido OR e_usuario_inexistente THEN
+            RAISE;
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20025, 'Erro ao obter nível do usuário: ' || SQLERRM);
     END fn_obter_nivel_usuario;
 
     -- ----------------------------------------------------------------

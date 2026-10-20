@@ -5,12 +5,12 @@
 // TURMA: 2TDSPG
 //
 // COMO EXECUTAR:
-// 1. No MongoDB Compass:
-//    - Abra a aba inferior ">_MONGOSH" conectada ao seu cluster (Atlas ou Local).
-//    - Copie e cole todo o conteúdo deste arquivo e pressione Enter.
-//    - Ou execute: load("setup_mongodb_conteudos.js")
-// 2. Via Linha de Comando (mongosh):
+// 1. Via Linha de Comando (mongosh) a partir da pasta 'mongodb/':
+//    cd mongodb
 //    mongosh "mongodb+srv://<usuario>:<senha>@cluster.mongodb.net/petguardian" setup_mongodb_conteudos.js
+// 2. No MongoDB Compass (aba ">_MONGOSH"):
+//    process.chdir("<caminho_do_repositorio>/Database-Advanced/mongodb")
+//    load("setup_mongodb_conteudos.js")
 // ====================================================================
 
 // Função de log universal (compatível com mongosh, mongo shell e Node.js)
@@ -91,16 +91,17 @@ log(">>> Índices estratégicos criados com sucesso.");
 // 5. Carga dos Dados a partir do Dataset Estruturado JSON (conteudos_dataset.json)
 const fs = require("fs");
 const path = require("path");
-let caminhoJson = path.resolve(typeof __dirname !== "undefined" ? __dirname : ".", "conteudos_dataset.json");
-if (!fs.existsSync(caminhoJson)) {
-  const caminhoAlternativo = path.resolve(typeof __dirname !== "undefined" ? __dirname : ".", "mongodb", "conteudos_dataset.json");
-  if (fs.existsSync(caminhoAlternativo)) {
-    caminhoJson = caminhoAlternativo;
-  }
-}
 
-if (!fs.existsSync(caminhoJson)) {
-  throw new Error("ERRO CRÍTICO: Arquivo 'conteudos_dataset.json' não encontrado no diretório: " + caminhoJson);
+const caminhosPossiveis = [
+  path.resolve(typeof __dirname !== "undefined" ? __dirname : ".", "conteudos_dataset.json"),
+  path.resolve(typeof __dirname !== "undefined" ? __dirname : ".", "mongodb", "conteudos_dataset.json"),
+  path.resolve(typeof __dirname !== "undefined" ? __dirname : ".", "Database-Advanced", "mongodb", "conteudos_dataset.json")
+];
+
+const caminhoJson = caminhosPossiveis.find(p => fs.existsSync(p));
+
+if (!caminhoJson) {
+  throw new Error("ERRO CRÍTICO: Arquivo 'conteudos_dataset.json' não encontrado. Execute a partir da pasta 'mongodb/'.");
 }
 
 const conteudoBruto = fs.readFileSync(caminhoJson, "utf8");
