@@ -301,6 +301,9 @@ A execução no banco relacional é dividida em 2 passos modulares, respeitando 
 2. **Passo 2 — Empacotamento PL/SQL e Testes (Entregável 2):**
    * Abra e execute o arquivo [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql).
    * Ele compila a especificação e o corpo do pacote **`PKG_PETGUARDIAN`**, compila a trigger de auditoria **`TRG_AUDIT_TAREFA`** e dispara a **Bateria de Testes de Integração (Testes 1 a 5)** com saída no `DBMS_OUTPUT` e rollback limpo.
+3. **Passo 3 — Exportação do Dataset JSON (Entregável 3):**
+   * Abra e execute o arquivo [`exportar_dataset_conteudos.sql`](./exportar_dataset_conteudos.sql).
+   * Ele executa uma única consulta nativa SQL (`JSON_SERIALIZE` + `JSON_ARRAYAGG` + `JSON_OBJECT`) sobre a tabela relacional `AULA`, gerando no console exatamente a estrutura e os dados do arquivo [`conteudos_dataset.json`](./conteudos_dataset.json).
 
 ---
 
