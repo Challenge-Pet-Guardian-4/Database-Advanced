@@ -268,17 +268,18 @@ INSERT INTO endereco (id_endereco, cep, rua, numero, bairro_id_bairro) VALUES (3
 INSERT INTO endereco (id_endereco, cep, rua, numero, bairro_id_bairro) VALUES (4, '22070010', 'Avenida Atlântica', '1500', 4);
 INSERT INTO endereco (id_endereco, cep, rua, numero, bairro_id_bairro) VALUES (5, '30140010', 'Avenida Getúlio Vargas', '300', 5);
 
--- 6. USUARIO (5+ registros com FK endereco_id_endereco e senhas legíveis)
+-- 6. USUARIO (5+ registros com FK endereco_id_endereco e senhas em hash BCrypt)
+-- Senha de acesso para todos os usuários iniciais: 'Senha#123'
 INSERT INTO usuario (id_usuario, nome, email, senha, role, telefone_id_telefone, endereco_id_endereco) 
-VALUES (1, 'Carlos Silva', 'carlos.silva@email.com', 'Senha#123', 'PREMIUM', 1, 1);
+VALUES (1, 'Carlos Silva', 'carlos.silva@email.com', '$2a$10$nFdyYsVy8uiDRBO5KBpBWu9RKUQsIAM36oG9sK3ABRpcGike3MLv.', 'PREMIUM', 1, 1);
 INSERT INTO usuario (id_usuario, nome, email, senha, role, telefone_id_telefone, endereco_id_endereco) 
-VALUES (2, 'Mariana Oliveira', 'mariana.o@email.com', 'Senha#456', 'COMUM', 2, 2);
+VALUES (2, 'Mariana Oliveira', 'mariana.o@email.com', '$2a$10$nFdyYsVy8uiDRBO5KBpBWu9RKUQsIAM36oG9sK3ABRpcGike3MLv.', 'COMUM', 2, 2);
 INSERT INTO usuario (id_usuario, nome, email, senha, role, telefone_id_telefone, endereco_id_endereco) 
-VALUES (3, 'Roberto Santos', 'roberto.s@email.com', 'Senha#789', 'ADMIN', 3, 3);
+VALUES (3, 'Roberto Santos', 'roberto.s@email.com', '$2a$10$nFdyYsVy8uiDRBO5KBpBWu9RKUQsIAM36oG9sK3ABRpcGike3MLv.', 'ADMIN', 3, 3);
 INSERT INTO usuario (id_usuario, nome, email, senha, role, telefone_id_telefone, endereco_id_endereco) 
-VALUES (4, 'Fernanda Costa', 'fernanda.c@email.com', 'Senha#101', 'COMUM', 4, 4);
+VALUES (4, 'Fernanda Costa', 'fernanda.c@email.com', '$2a$10$nFdyYsVy8uiDRBO5KBpBWu9RKUQsIAM36oG9sK3ABRpcGike3MLv.', 'COMUM', 4, 4);
 INSERT INTO usuario (id_usuario, nome, email, senha, role, telefone_id_telefone, endereco_id_endereco) 
-VALUES (5, 'Lucas Mendes', 'lucas.m@email.com', 'Senha#202', 'PREMIUM', 5, 5);
+VALUES (5, 'Lucas Mendes', 'lucas.m@email.com', '$2a$10$nFdyYsVy8uiDRBO5KBpBWu9RKUQsIAM36oG9sK3ABRpcGike3MLv.', 'PREMIUM', 5, 5);
 
 -- 7. RACA (5+ registros)
 INSERT INTO raca (id_raca, nome_raca) VALUES (1, 'Vira-lata (SRD)');
