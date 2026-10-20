@@ -68,13 +68,30 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
     ) RETURN VARCHAR2;
 
     -- ----------------------------------------------------------------
-    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP (REDUÇÃO DE CÓDIGO JAVA)
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP & AUDITORIA EMPACOTADA
     -- ----------------------------------------------------------------
 
     -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
     PROCEDURE pr_transferir_responsavel_principal (
         p_id_pet          IN NUMBER,
         p_novo_id_usuario IN NUMBER
+    );
+
+    -- 2.2 Gravação modular de auditoria DML (invocado pela trigger trg_audit_tarefa)
+    PROCEDURE pr_registrar_auditoria_tarefa (
+        p_tipo_operacao  IN VARCHAR2,
+        p_old_id_tarefa  IN NUMBER,
+        p_old_titulo     IN VARCHAR2,
+        p_old_pontos     IN NUMBER,
+        p_old_status     IN NUMBER,
+        p_old_pet        IN NUMBER,
+        p_old_usuario    IN NUMBER,
+        p_new_id_tarefa  IN NUMBER,
+        p_new_titulo     IN VARCHAR2,
+        p_new_pontos     IN NUMBER,
+        p_new_status     IN NUMBER,
+        p_new_pet        IN NUMBER,
+        p_new_usuario    IN NUMBER
     );
 
 END pkg_petguardian;
@@ -265,7 +282,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     END fn_obter_nivel_usuario;
 
     -- ----------------------------------------------------------------
-    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP & AUDITORIA EMPACOTADA
     -- ----------------------------------------------------------------
 
     -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
@@ -303,48 +320,79 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20042, 'Erro ao transferir responsabilidade principal: ' || SQLERRM);
     END pr_transferir_responsavel_principal;
 
+    -- 2.2 Gravação modular de auditoria DML (invocado pela trigger trg_audit_tarefa)
+    PROCEDURE pr_registrar_auditoria_tarefa (
+        p_tipo_operacao  IN VARCHAR2,
+        p_old_id_tarefa  IN NUMBER,
+        p_old_titulo     IN VARCHAR2,
+        p_old_pontos     IN NUMBER,
+        p_old_status     IN NUMBER,
+        p_old_pet        IN NUMBER,
+        p_old_usuario    IN NUMBER,
+        p_new_id_tarefa  IN NUMBER,
+        p_new_titulo     IN VARCHAR2,
+        p_new_pontos     IN NUMBER,
+        p_new_status     IN NUMBER,
+        p_new_pet        IN NUMBER,
+        p_new_usuario    IN NUMBER
+    ) IS
+        v_valores_old VARCHAR2(4000) := NULL;
+        v_valores_new VARCHAR2(4000) := NULL;
+    BEGIN
+        IF p_tipo_operacao IN ('INSERT', 'UPDATE') THEN
+            v_valores_new := 'ID_TAREFA=' || p_new_id_tarefa || 
+                             '; TITULO=' || p_new_titulo || 
+                             '; PONTOS=' || p_new_pontos || 
+                             '; STATUS=' || p_new_status || 
+                             '; PET=' || p_new_pet || 
+                             '; USUARIO=' || p_new_usuario;
+        END IF;
+
+        IF p_tipo_operacao IN ('UPDATE', 'DELETE') THEN
+            v_valores_old := 'ID_TAREFA=' || p_old_id_tarefa || 
+                             '; TITULO=' || p_old_titulo || 
+                             '; PONTOS=' || p_old_pontos || 
+                             '; STATUS=' || p_old_status || 
+                             '; PET=' || p_old_pet || 
+                             '; USUARIO=' || p_old_usuario;
+        END IF;
+
+        INSERT INTO auditoria_dml_tarefa (
+            nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos
+        ) VALUES (
+            USER, p_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new
+        );
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20043, 'Erro ao registrar auditoria de tarefa: ' || SQLERRM);
+    END pr_registrar_auditoria_tarefa;
+
 END pkg_petguardian;
 /
 
 -- ====================================================================
 -- PARTE 3: TRIGGER DE AUDITORIA DML (AUDITORIA_DML_TAREFA)
+-- DISPARADOR LEVE QUE DELEGA A EXECUÇÃO PARA A PACKAGE EMPACOTADA
 -- ====================================================================
 CREATE OR REPLACE TRIGGER trg_audit_tarefa
 AFTER INSERT OR UPDATE OR DELETE ON tarefa
 FOR EACH ROW
-DECLARE
-    v_tipo_operacao VARCHAR2(10);
-    v_valores_old   VARCHAR2(4000) := NULL;
-    v_valores_new   VARCHAR2(4000) := NULL;
 BEGIN
-    IF INSERTING OR UPDATING THEN
-        v_valores_new := 'ID_TAREFA=' || :NEW.id_tarefa || 
-                         '; TITULO=' || :NEW.titulo || 
-                         '; PONTOS=' || :NEW.pontos_tarefa || 
-                         '; STATUS=' || :NEW.status_id_status || 
-                         '; PET=' || :NEW.pet_id_pet || 
-                         '; USUARIO=' || :NEW.usuario_id_usuario;
-    END IF;
-
-    IF UPDATING OR DELETING THEN
-        v_valores_old := 'ID_TAREFA=' || :OLD.id_tarefa || 
-                         '; TITULO=' || :OLD.titulo || 
-                         '; PONTOS=' || :OLD.pontos_tarefa || 
-                         '; STATUS=' || :OLD.status_id_status || 
-                         '; PET=' || :OLD.pet_id_pet || 
-                         '; USUARIO=' || :OLD.usuario_id_usuario;
-    END IF;
-
-    IF INSERTING THEN
-        v_tipo_operacao := 'INSERT';
-    ELSIF UPDATING THEN
-        v_tipo_operacao := 'UPDATE';
-    ELSE
-        v_tipo_operacao := 'DELETE';
-    END IF;
-
-    INSERT INTO auditoria_dml_tarefa (nome_usuario, tipo_operacao, data_hora_operacao, valores_anteriores, valores_novos)
-    VALUES (USER, v_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new);
+    pkg_petguardian.pr_registrar_auditoria_tarefa(
+        p_tipo_operacao  => CASE WHEN INSERTING THEN 'INSERT' WHEN UPDATING THEN 'UPDATE' ELSE 'DELETE' END,
+        p_old_id_tarefa  => :OLD.id_tarefa,
+        p_old_titulo     => :OLD.titulo,
+        p_old_pontos     => :OLD.pontos_tarefa,
+        p_old_status     => :OLD.status_id_status,
+        p_old_pet        => :OLD.pet_id_pet,
+        p_old_usuario    => :OLD.usuario_id_usuario,
+        p_new_id_tarefa  => :NEW.id_tarefa,
+        p_new_titulo     => :NEW.titulo,
+        p_new_pontos     => :NEW.pontos_tarefa,
+        p_new_status     => :NEW.status_id_status,
+        p_new_pet        => :NEW.pet_id_pet,
+        p_new_usuario    => :NEW.usuario_id_usuario
+    );
 END trg_audit_tarefa;
 /
 

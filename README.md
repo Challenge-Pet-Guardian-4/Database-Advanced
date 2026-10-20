@@ -21,6 +21,7 @@
 * **Documentação Técnica PDF:** [`Documentação Database Advanced Sprint 4 - Pet Guardian.pdf`](./docs/Documenta%C3%A7%C3%A3o%20Database%20Advanced%20Sprint%204%20-%20Pet%20Guardian.pdf)
 * **Script SQL Relacional (DDL 3FN + Carga de Dados):** [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql)
 * **Script de Empacotamento PL/SQL (Packages Isoladas):** [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql)
+* **Script de Exportação JSON (Oracle 19c):** [`exportar_dataset_conteudos.sql`](./exportar_dataset_conteudos.sql)
 * **Script NoSQL JavaScript (MongoDB Shell / Compass):** [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js)
 * **Dataset de Conteúdos JSON:** [`conteudos_dataset.json`](./conteudos_dataset.json)
 * **Vídeo Demonstrativo da Execução (YouTube):** *[Link do YouTube a ser anexado]*
@@ -33,7 +34,7 @@
 | :--- | :--- | :---: | :--- | :---: |
 | **1. Modelo Relacional Normalizado** | Modelo 3FN coerente com a proposta de valor Clyvo, sem redundâncias e com integridade referencial estrita. | 10 pts | Diagramas em `docs/` e tabelas no [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql) | Concluído |
 | **2. Empacotamento de Processos (Packages)** | Todas as procedures e functions organizadas em pacotes PL/SQL, com controle de transação e tratamento de exceções. | 30 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
-| **3. Exportação do Dataset JSON** | Dataset estruturado em formato JSON (conteúdos das aulas desacoplados da tabela `AULA`) pronto para carga NoSQL. | 20 pts | [`conteudos_dataset.json`](./conteudos_dataset.json) | Concluído |
+| **3. Exportação do Dataset JSON** | Script SQL Oracle 19c e dataset estruturado em JSON pronto para carga NoSQL. | 20 pts | [`exportar_dataset_conteudos.sql`](./exportar_dataset_conteudos.sql) e [`conteudos_dataset.json`](./conteudos_dataset.json) | Concluído |
 | **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleção, validação de schema (`$jsonSchema`), índices e ingestão do dataset. | 30 pts | [`setup_mongodb_conteudos.js`](./setup_mongodb_conteudos.js) | Concluído |
 | **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | Link no README (YouTube) | Em gravação |
 
