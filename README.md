@@ -19,6 +19,7 @@
 
 * **Repositório GitHub:** [https://github.com/Challenge-Pet-Guardian-4/Database-Advanced](https://github.com/Challenge-Pet-Guardian-4/Database-Advanced)
 * **Documentação Técnica PDF:** [`Documentação Database Advanced Sprint 4 - Pet Guardian.pdf`](./docs/Documenta%C3%A7%C3%A3o%20Database%20Advanced%20Sprint%204%20-%20Pet%20Guardian.pdf)
+* **Projeto Oracle Data Modeler:** [Pasta `data modeler/`](./data%20modeler) (arquivos `challenge.dmd` e `challenge.ddl`)
 * **Script SQL Relacional (DDL 3FN + Carga de Dados):** [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql)
 * **Script de Empacotamento PL/SQL (Packages e Exportação JSON):** [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql)
 * **Pasta de Artefatos NoSQL MongoDB:** [`mongodb/`](./mongodb)
@@ -35,7 +36,7 @@
 | Requisito | Descrição Oficial da Sprint 4 | Peso | Onde Encontrar | Status |
 | :--- | :--- | :---: | :--- | :---: |
 | **1. Modelo Relacional Normalizado** | Modelo 3FN coerente com a proposta de valor Clyvo, sem redundâncias e com integridade referencial estrita. | 20 pts | Diagramas em `docs/` e tabelas no [`2TDSPG_2026_CodigoSql_PetGuardian.sql`](./2TDSPG_2026_CodigoSql_PetGuardian.sql) | Concluído |
-| **2. Empacotamento de Processos (Packages)** | Todas as procedures e functions organizadas em pacotes PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções. | 25 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
+| **2. Empacotamento de Processos (Packages)** | Procedimentos, funções e trigger personalizada (`TRG_AUDIT_TAREFA`) integrados no pacote PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções padronizadas. | 25 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
 | **3. Exportação do Dataset JSON** | Procedimento em pacote PL/SQL (`pr_exportar_aulas_json`) e dataset estruturado em JSON exportado a partir de dados reais de `AULA`. | 20 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) e [`mongodb/aulas_dataset.json`](./mongodb/aulas_dataset.json) | Concluído |
 | **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleções (`aulas` e `conteudos_aula`), validação de schema (`$jsonSchema`), índices e ingestão dos datasets. | 25 pts | [`mongodb/setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js) e [`mongodb/setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js) | Concluído |
 | **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | Link no README (YouTube) | Em gravação |
@@ -182,6 +183,24 @@ Armazena materiais didáticos detalhados, passos práticos e links multimídia g
    * Abra e execute o arquivo [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql).
    * Compila a especificação e corpo de `PKG_PETGUARDIAN`, a trigger `TRG_AUDIT_TAREFA` e dispara a bateria de testes demonstrativos (Testes 1 a 6) com rollback limpo.
    * O **Teste 6** invoca diretamente `PKG_PETGUARDIAN.pr_exportar_aulas_json` para demonstrar a extração nativa em JSON das aulas relacionais.
+   * *(Opcional)* Para regerar o arquivo físico `mongodb/aulas_dataset.json` via Oracle SQL Developer usando SPOOL:
+     ```sql
+     SET SERVEROUTPUT ON SIZE UNLIMITED;
+     SET LINESIZE 32767;
+     SET LONG 100000;
+     SET PAGESIZE 0;
+     SET FEEDBACK OFF;
+     SET HEAD OFF;
+     SPOOL "<caminho_do_repositorio>/Database-Advanced/mongodb/aulas_dataset.json";
+     DECLARE
+         v_json CLOB;
+     BEGIN
+         pkg_petguardian.pr_exportar_aulas_json(v_json);
+         DBMS_OUTPUT.PUT_LINE(v_json);
+     END;
+     /
+     SPOOL OFF;
+     ```
 
 ---
 
@@ -234,8 +253,8 @@ Titularidade de Thor transferida com sucesso para Lucas Mendes (ID 5).
 
 === TESTE 5: Disparo da Trigger trg_audit_tarefa na Tabela TAREFA ===
 Tarefa ID 2 atualizada com sucesso. Registro de auditoria gerado pela trigger:
-ID_AUDITORIA: 1 | USUARIO: RM561432 | OPERACAO: UPDATE | VALORES_OLD: ID_TAREFA=2... | VALORES_NEW: ID_TAREFA=2; STATUS=2...
+ID_AUDITORIA: 1 | NOME_USUARIO: RM561432 | TIPO_OPERACAO: UPDATE | VALORES_OLD: ID_TAREFA=2; TITULO=Medicamento Antibiótico; PONTOS=10; STATUS=1; PET=1; USUARIO=1 | VALORES_NEW: ID_TAREFA=2; TITULO=Medicamento Antibiótico; PONTOS=10; STATUS=2; PET=1; USUARIO=1
 
 === TESTE 6: pr_exportar_aulas_json (Empacotamento do Dataset JSON) ===
-Dataset JSON exportado com sucesso (948 caracteres).
+Dataset JSON exportado com sucesso (1434 caracteres).
 ```
