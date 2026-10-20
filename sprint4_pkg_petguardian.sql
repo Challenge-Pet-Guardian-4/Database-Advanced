@@ -2,7 +2,7 @@
 -- CHALLENGE CLYVO 2026 — SPRINT 4
 -- DISCIPLINA: Mastering Relational and Non-Relational Database
 -- REQUISITO 2: Empacotamento dos Processos (Packages) no Oracle PL/SQL
--- FOCO: Pontuação Gamificada de Pets, Governança do Care Circle e Transações
+-- FOCO: Arquitetura Pet-Centric, Pontuação Gamificada, Governança do Care Circle e Exportação JSON
 -- TURMA: 2TDSPG
 -- INTEGRANTES:
 --   1. Enzo Okuizumi        - RM: 561432
@@ -34,6 +34,8 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
 
     -- ----------------------------------------------------------------
     -- SEÇÃO 1: PONTUAÇÃO GAMIFICADA DE PETS E USUÁRIOS (APP & JAVA)
+    -- ARQUITETURA PET-CENTRIC: A pontuação (XP) pertence ao PET.
+    -- Todos os co-cuidadores compartilham e visualizam a mesma evolução.
     -- ----------------------------------------------------------------
 
     -- 1.1 Cálculo consolidado de pontuação do pet individual (tarefas + aulas)
@@ -44,7 +46,7 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_pontos_totais  OUT NUMBER
     );
 
-    -- 1.2 Cálculo agregado de todos os pets do usuário (usado internamente por pr_obter_resumo_rede_cuidado)
+    -- 1.2 Cálculo agregado de todos os pets do usuário (agregação da rede de cuidado do tutor)
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -62,13 +64,13 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_pontos_acumulados  OUT NUMBER
     );
 
-    -- 1.4 Classificação de gamificação do tutor baseada no XP acumulado (BRONZE, PRATA, OURO)
+    -- 1.4 Classificação de engajamento do tutor baseada no XP consolidado dos seus pets
     FUNCTION fn_obter_nivel_usuario (
         p_id_usuario IN NUMBER
     ) RETURN VARCHAR2;
 
     -- ----------------------------------------------------------------
-    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP & AUDITORIA EMPACOTADA
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS, AUDITORIA E EXPORTAÇÃO JSON
     -- ----------------------------------------------------------------
 
     -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
@@ -94,6 +96,11 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_new_usuario    IN NUMBER
     );
 
+    -- 2.3 Exportação nativa do dataset relacional de AULA em formato JSON
+    PROCEDURE pr_exportar_aulas_json (
+        p_json_dataset OUT CLOB
+    );
+
 END pkg_petguardian;
 /
 
@@ -107,6 +114,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     -- ----------------------------------------------------------------
 
     -- 1.1 Cálculo consolidado de pontuação do pet individual (tarefas + aulas)
+    -- Os pontos pertencem ao Pet: tarefas e aulas realizadas somam ao XP do animal
     PROCEDURE pr_calcular_pontuacao_pet (
         p_id_pet         IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -124,12 +132,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20019, 'Pet com id ' || p_id_pet || ' não foi encontrado.');
         END IF;
 
-        -- Soma de tarefas concluídas do pet (status_id_status = 2)
+        -- Soma de tarefas concluídas do pet (busca dinâmica por status 'CONCLUIDO', sem ID mágico)
         SELECT NVL(SUM(t.pontos_tarefa), 0)
           INTO p_pontos_tarefas
           FROM tarefa t
+          JOIN status s ON t.status_id_status = s.id_status
          WHERE t.pet_id_pet = p_id_pet
-           AND t.status_id_status = 2;
+           AND s.nome_status = 'CONCLUIDO';
 
         -- Soma de aulas concluídas associadas às trilhas e módulos do pet
         SELECT NVL(SUM(a.pontos_aula), 0)
@@ -148,7 +157,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20020, 'Erro ao calcular pontuação consolidada do pet: ' || SQLERRM);
     END pr_calcular_pontuacao_pet;
 
-    -- 1.2 Cálculo agregado de todos os pets do usuário (usado internamente por pr_obter_resumo_rede_cuidado)
+    -- 1.2 Cálculo agregado de todos os pets do usuário (usado por pr_obter_resumo_rede_cuidado)
     PROCEDURE pr_calcular_pontuacao_usuario (
         p_id_usuario     IN NUMBER,
         p_pontos_tarefas OUT NUMBER,
@@ -166,11 +175,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20022, 'Usuário com id ' || p_id_usuario || ' não foi encontrado.');
         END IF;
 
-        -- Tarefas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
+        -- Tarefas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET e status 'CONCLUIDO')
         SELECT NVL(SUM(t.pontos_tarefa), 0)
           INTO p_pontos_tarefas
           FROM tarefa t
-         WHERE t.status_id_status = 2
+          JOIN status s ON t.status_id_status = s.id_status
+         WHERE s.nome_status = 'CONCLUIDO'
            AND t.pet_id_pet IN (
                SELECT up.pet_id_pet 
                  FROM usuario_pet up 
@@ -237,12 +247,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
                 WHERE up.usuario_id_usuario = p_id_usuario
             );
 
-        -- Tarefas pendentes e concluídas da rede do tutor (agregação unificada condicional)
-        SELECT NVL(COUNT(CASE WHEN t.status_id_status = 1 THEN 1 END), 0),
-               NVL(COUNT(CASE WHEN t.status_id_status = 2 THEN 1 END), 0)
+        -- Tarefas pendentes e concluídas da rede do tutor (busca dinâmica por status 'PENDENTE' e 'CONCLUIDO')
+        SELECT NVL(COUNT(CASE WHEN s.nome_status = 'PENDENTE' THEN 1 END), 0),
+               NVL(COUNT(CASE WHEN s.nome_status = 'CONCLUIDO' THEN 1 END), 0)
           INTO p_tarefas_pendentes,
                p_tarefas_concluidas
           FROM tarefa t
+          JOIN status s ON t.status_id_status = s.id_status
          WHERE t.pet_id_pet IN (
              SELECT up.pet_id_pet
                FROM usuario_pet up
@@ -258,7 +269,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20024, 'Erro ao obter resumo da rede de cuidado: ' || SQLERRM);
     END pr_obter_resumo_rede_cuidado;
 
-    -- 1.4 Classificação de gamificação do tutor baseada no XP acumulado (BRONZE, PRATA, OURO)
+    -- 1.4 Classificação de engajamento do tutor baseada no XP consolidado dos seus pets
     FUNCTION fn_obter_nivel_usuario (
         p_id_usuario IN NUMBER
     ) RETURN VARCHAR2 IS
@@ -282,7 +293,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     END fn_obter_nivel_usuario;
 
     -- ----------------------------------------------------------------
-    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS DO APP & AUDITORIA EMPACOTADA
+    -- SEÇÃO 2: OPERAÇÕES TRANSACIONAIS, AUDITORIA E EXPORTAÇÃO JSON
     -- ----------------------------------------------------------------
 
     -- 2.1 Transferência atômica de responsabilidade principal no Care Circle (USUARIO_PET)
@@ -367,6 +378,32 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20043, 'Erro ao registrar auditoria de tarefa: ' || SQLERRM);
     END pr_registrar_auditoria_tarefa;
 
+    -- 2.3 Exportação nativa do dataset relacional de AULA em formato JSON
+    PROCEDURE pr_exportar_aulas_json (
+        p_json_dataset OUT CLOB
+    ) IS
+    BEGIN
+        SELECT JSON_SERIALIZE(
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'id_aula'          VALUE a.id_aula,
+                    'nome'             VALUE a.nome,
+                    'descricao'        VALUE a.descricao,
+                    'pontos_aula'      VALUE a.pontos_aula,
+                    'dificuldade'      VALUE a.dificuldade,
+                    'concluida'        VALUE a.concluida,
+                    'modulo_id_modulo' VALUE a.modulo_id_modulo
+                )
+                ORDER BY a.id_aula
+            ) RETURNING CLOB PRETTY
+        )
+        INTO p_json_dataset
+        FROM aula a;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20044, 'Erro ao exportar dataset JSON de aulas: ' || SQLERRM);
+    END pr_exportar_aulas_json;
+
 END pkg_petguardian;
 /
 
@@ -400,7 +437,7 @@ END trg_audit_tarefa;
 -- PARTE 4: BATERIA DE TESTES DE INTEGRAÇÃO (PKG_PETGUARDIAN)
 -- ====================================================================
 
--- 1. Teste de Pontuação de Pet Individual (Thor - ID 1)
+-- 1. Teste de Pontuação do Pet Individual (Thor - ID 1)
 DECLARE
     v_tar NUMBER;
     v_aul NUMBER;
@@ -412,7 +449,7 @@ BEGIN
 END;
 /
 
--- 2. Teste de Pontuação Agregada e Nível de Gamificação do Usuário (Carlos Silva - ID 1)
+-- 2. Teste de Pontuação Agregada e Nível do Tutor (Carlos Silva - ID 1)
 DECLARE
     v_tar_usr NUMBER;
     v_aul_usr NUMBER;
@@ -421,7 +458,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('=== TESTE 2: pr_calcular_pontuacao_usuario e fn_obter_nivel_usuario ===');
     pkg_petguardian.pr_calcular_pontuacao_usuario(1, v_tar_usr, v_aul_usr, v_tot_usr);
     DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Tarefas: ' || v_tar_usr || ' | Aulas: ' || v_aul_usr || ' | Total: ' || v_tot_usr);
-    DBMS_OUTPUT.PUT_LINE('Nível de Gamificação (FUNCTION): ' || pkg_petguardian.fn_obter_nivel_usuario(1));
+    DBMS_OUTPUT.PUT_LINE('Nível de Gamificação do Tutor (FUNCTION): ' || pkg_petguardian.fn_obter_nivel_usuario(1));
 END;
 /
 
@@ -452,13 +489,27 @@ END;
 /
 
 -- 5. Disparo e Evidências da Trigger de Auditoria DML (TRG_AUDIT_TAREFA)
+DECLARE
+    v_id_concluido NUMBER;
 BEGIN
     DBMS_OUTPUT.PUT_LINE('=== TESTE 5: Disparo da Trigger trg_audit_tarefa na Tabela TAREFA ===');
+    SELECT id_status INTO v_id_concluido FROM status WHERE nome_status = 'CONCLUIDO';
+    
     UPDATE tarefa
-       SET status_id_status = 2,
+       SET status_id_status = v_id_concluido,
            conclusao = SYSTIMESTAMP
      WHERE id_tarefa = 2;
     DBMS_OUTPUT.PUT_LINE('Tarefa ID 2 atualizada com sucesso. Registro de auditoria gerado pela trigger:');
+END;
+/
+
+-- 6. Teste de Exportação do Dataset JSON de Aulas Embutido no Pacote
+DECLARE
+    v_dataset_json CLOB;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== TESTE 6: pr_exportar_aulas_json (Empacotamento do Dataset JSON) ===');
+    pkg_petguardian.pr_exportar_aulas_json(v_dataset_json);
+    DBMS_OUTPUT.PUT_LINE('Dataset JSON exportado com sucesso (' || DBMS_LOB.GETLENGTH(v_dataset_json) || ' caracteres).');
 END;
 /
 

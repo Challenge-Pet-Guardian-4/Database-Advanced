@@ -11,22 +11,34 @@
 SET SERVEROUTPUT ON SIZE UNLIMITED;
 
 
--- PARTE 0: LIMPEZA DE OBJETOS PREEXISTENTES (DROP SEGURO)
+-- PARTE 0: LIMPEZA DE OBJETOS PREEXISTENTES (DROP SEGURO E IDEMPOTENTE)
 
 BEGIN
+    -- Drop seguro de tabelas com remoção em cascata de constraints
     FOR t IN (SELECT table_name FROM user_tables WHERE table_name IN (
         'AUDITORIA_DML_TAREFA', 'HISTORICO', 'AULA', 'MODULO', 'TRILHA',
         'TAREFA', 'STATUS', 'USUARIO_PET', 'ENDERECO', 'BAIRRO',
         'CIDADE', 'ESTADO', 'PET', 'RACA', 'USUARIO', 'TELEFONE'
     )) LOOP
-        EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS PURGE';
+        BEGIN
+            EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS PURGE';
+            DBMS_OUTPUT.PUT_LINE('Tabela removida: ' || t.table_name);
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Aviso ao remover tabela ' || t.table_name || ': ' || SQLERRM);
+        END;
     END LOOP;
 
+    -- Drop seguro do pacote PKG_PETGUARDIAN
     FOR p IN (SELECT object_name, object_type FROM user_objects WHERE object_name = 'PKG_PETGUARDIAN' AND object_type IN ('PACKAGE', 'PACKAGE BODY')) LOOP
-        EXECUTE IMMEDIATE 'DROP ' || p.object_type || ' ' || p.object_name;
+        BEGIN
+            EXECUTE IMMEDIATE 'DROP ' || p.object_type || ' ' || p.object_name;
+            DBMS_OUTPUT.PUT_LINE('Objeto removido: ' || p.object_type || ' ' || p.object_name);
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('Aviso ao remover ' || p.object_type || ' ' || p.object_name || ': ' || SQLERRM);
+        END;
     END LOOP;
-EXCEPTION
-    WHEN OTHERS THEN NULL;
 END;
 /
 
