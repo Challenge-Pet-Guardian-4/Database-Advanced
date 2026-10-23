@@ -78,6 +78,11 @@
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
 <dataTypeSize>20</dataTypeSize>
+<listOfValues>
+<valueDef value="AVANCADO" description=""/>
+<valueDef value="FACIL" description=""/>
+<valueDef value="MEDIO" description=""/>
+</listOfValues>
 <ownDataTypeParameters>20,,</ownDataTypeParameters>
 </Attribute>
 <Attribute name="concluida" id="E0EB22C1-641E-EFA1-2D17-97347FE2343E">
