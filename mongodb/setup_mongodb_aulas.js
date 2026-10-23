@@ -54,7 +54,7 @@ dbTarget.createCollection("aulas", {
         },
         dificuldade: {
           bsonType: "string",
-          description: "Nível de dificuldade (ex: INICIANTE, INTERMEDIARIO, AVANCADO)."
+          description: "Nível de dificuldade (ex: FACIL, MEDIO, AVANCADO)."
         },
         concluida: {
           bsonType: ["int", "long", "double", "bool"],

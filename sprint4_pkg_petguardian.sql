@@ -350,6 +350,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         p_new_pet        IN NUMBER,
         p_new_usuario    IN NUMBER
     ) IS
+        PRAGMA AUTONOMOUS_TRANSACTION;
         v_valores_old VARCHAR2(4000) := NULL;
         v_valores_new VARCHAR2(4000) := NULL;
     BEGIN
@@ -376,8 +377,10 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         ) VALUES (
             USER, p_tipo_operacao, SYSTIMESTAMP, v_valores_old, v_valores_new
         );
+        COMMIT;
     EXCEPTION
         WHEN OTHERS THEN
+            ROLLBACK;
             RAISE_APPLICATION_ERROR(-20043, 'Erro ao registrar auditoria de tarefa: ' || SQLERRM);
     END pr_registrar_auditoria_tarefa;
 

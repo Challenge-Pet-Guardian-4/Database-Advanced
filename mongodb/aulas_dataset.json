@@ -4,7 +4,7 @@
     "nome": "Introdução ao Clicker",
     "descricao": "Fundamentos de marcação positiva",
     "pontos_aula": 50,
-    "dificuldade": "INICIANTE",
+    "dificuldade": "FACIL",
     "concluida": 1,
     "modulo_id_modulo": 1
   },
@@ -13,7 +13,7 @@
     "nome": "Critério de Duração do Fica",
     "descricao": "Aumentando o tempo gradativamente",
     "pontos_aula": 80,
-    "dificuldade": "INTERMEDIARIO",
+    "dificuldade": "MEDIO",
     "concluida": 0,
     "modulo_id_modulo": 1
   },
@@ -22,7 +22,7 @@
     "nome": "Troca de Foco na Guia",
     "descricao": "Atenção ao tutor em vez de estímulos da rua",
     "pontos_aula": 70,
-    "dificuldade": "INTERMEDIARIO",
+    "dificuldade": "MEDIO",
     "concluida": 1,
     "modulo_id_modulo": 2
   },
@@ -31,7 +31,7 @@
     "nome": "Receitas de Enriquecimento",
     "descricao": "Preparo de petiscos congelados saudáveis",
     "pontos_aula": 40,
-    "dificuldade": "INICIANTE",
+    "dificuldade": "FACIL",
     "concluida": 1,
     "modulo_id_modulo": 4
   },
@@ -49,7 +49,7 @@
     "nome": "Estímulo Olfativo com Catnip e Silvervine",
     "descricao": "Enriquecimento olfativo para felinos domésticos",
     "pontos_aula": 50,
-    "dificuldade": "INICIANTE",
+    "dificuldade": "FACIL",
     "concluida": 1,
     "modulo_id_modulo": 5
   }

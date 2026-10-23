@@ -367,17 +367,17 @@ INSERT INTO modulo (id_modulo, nome, tempo_conclusao, descricao, trilha_id_trilh
 
 -- 14. AULA (6 registros sincronizados com MongoDB NoSQL - sem coluna redundante de conteudo)
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
-VALUES (1, 'Introdução ao Clicker', 'Fundamentos de marcação positiva', 50, 'INICIANTE', 1, 1);
+VALUES (1, 'Introdução ao Clicker', 'Fundamentos de marcação positiva', 50, 'FACIL', 1, 1);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
-VALUES (2, 'Critério de Duração do Fica', 'Aumentando o tempo gradativamente', 80, 'INTERMEDIARIO', 0, 1);
+VALUES (2, 'Critério de Duração do Fica', 'Aumentando o tempo gradativamente', 80, 'MEDIO', 0, 1);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
-VALUES (3, 'Troca de Foco na Guia', 'Atenção ao tutor em vez de estímulos da rua', 70, 'INTERMEDIARIO', 1, 2);
+VALUES (3, 'Troca de Foco na Guia', 'Atenção ao tutor em vez de estímulos da rua', 70, 'MEDIO', 1, 2);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
-VALUES (4, 'Receitas de Enriquecimento', 'Preparo de petiscos congelados saudáveis', 40, 'INICIANTE', 1, 4);
+VALUES (4, 'Receitas de Enriquecimento', 'Preparo de petiscos congelados saudáveis', 40, 'FACIL', 1, 4);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
 VALUES (5, 'Rotas de Fuga e Segurança', 'Evitando que o felino se sinta acuado', 60, 'AVANCADO', 0, 5);
 INSERT INTO aula (id_aula, nome, descricao, pontos_aula, dificuldade, concluida, modulo_id_modulo) 
-VALUES (6, 'Estímulo Olfativo com Catnip e Silvervine', 'Enriquecimento olfativo para felinos domésticos', 50, 'INICIANTE', 1, 5);
+VALUES (6, 'Estímulo Olfativo com Catnip e Silvervine', 'Enriquecimento olfativo para felinos domésticos', 50, 'FACIL', 1, 5);
 
 -- 15. HISTORICO (5+ registros)
 INSERT INTO historico (id_hist, tipo_hist, data_hist, pet_id_pet) 
