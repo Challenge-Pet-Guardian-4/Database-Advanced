@@ -46,12 +46,13 @@ CREATE OR REPLACE PACKAGE pkg_petguardian AS
         p_pontos_totais  OUT NUMBER
     );
 
-    -- 1.2 Cálculo agregado de todos os pets do usuário (agregação da rede de cuidado do tutor)
+    -- 1.2 Cálculo agregado de todos os pets do usuário (com detalhamento em JSON nativo)
     PROCEDURE pr_calcular_pontuacao_usuario (
-        p_id_usuario     IN NUMBER,
-        p_pontos_tarefas OUT NUMBER,
-        p_pontos_aulas   OUT NUMBER,
-        p_pontos_totais  OUT NUMBER
+        p_id_usuario        IN NUMBER,
+        p_pontos_tarefas    OUT NUMBER,
+        p_pontos_aulas      OUT NUMBER,
+        p_pontos_totais     OUT NUMBER,
+        p_detalhe_pets_json OUT CLOB
     );
 
     -- 1.3 Relatório consolidado da rede de cuidado do usuário (/usuarios/me/rede-cuidado)
@@ -157,12 +158,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20020, 'Erro ao calcular pontuação consolidada do pet: ' || SQLERRM);
     END pr_calcular_pontuacao_pet;
 
-    -- 1.2 Cálculo agregado de todos os pets do usuário (usado por pr_obter_resumo_rede_cuidado)
+    -- 1.2 Cálculo agregado de todos os pets do usuário (com detalhamento em JSON nativo)
     PROCEDURE pr_calcular_pontuacao_usuario (
-        p_id_usuario     IN NUMBER,
-        p_pontos_tarefas OUT NUMBER,
-        p_pontos_aulas   OUT NUMBER,
-        p_pontos_totais  OUT NUMBER
+        p_id_usuario        IN NUMBER,
+        p_pontos_tarefas    OUT NUMBER,
+        p_pontos_aulas      OUT NUMBER,
+        p_pontos_totais     OUT NUMBER,
+        p_detalhe_pets_json OUT CLOB
     ) IS
         v_existe NUMBER;
     BEGIN
@@ -170,38 +172,32 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
             RAISE_APPLICATION_ERROR(-20018, 'ID do usuário fornecido é nulo ou inválido.');
         END IF;
 
-        SELECT COUNT(1) INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
-        IF v_existe = 0 THEN
-            RAISE_APPLICATION_ERROR(-20022, 'Usuário com id ' || p_id_usuario || ' não foi encontrado.');
-        END IF;
+        SELECT 1 INTO v_existe FROM usuario WHERE id_usuario = p_id_usuario;
 
-        -- Tarefas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET e status 'CONCLUIDO')
-        SELECT NVL(SUM(t.pontos_tarefa), 0)
-          INTO p_pontos_tarefas
-          FROM tarefa t
-          JOIN status s ON t.status_id_status = s.id_status
-         WHERE s.nome_status = 'CONCLUIDO'
-           AND t.pet_id_pet IN (
-               SELECT up.pet_id_pet 
-                 FROM usuario_pet up 
-                WHERE up.usuario_id_usuario = p_id_usuario
-           );
-
-        -- Aulas concluídas de todos os pets sob tutela do usuário (via USUARIO_PET)
-        SELECT NVL(SUM(a.pontos_aula), 0)
-          INTO p_pontos_aulas
-          FROM aula a
-          JOIN modulo m ON a.modulo_id_modulo = m.id_modulo
-          JOIN trilha tr ON m.trilha_id_trilha = tr.id_trilha
-         WHERE a.concluida = 1
-           AND tr.pet_id_pet IN (
-               SELECT up.pet_id_pet 
-                 FROM usuario_pet up 
-                WHERE up.usuario_id_usuario = p_id_usuario
-           );
+        WITH pet_pontos AS (
+            SELECT p.id_pet, p.nome,
+                   NVL((SELECT SUM(t.pontos_tarefa) FROM tarefa t JOIN status s ON t.status_id_status = s.id_status WHERE t.pet_id_pet = p.id_pet AND s.nome_status = 'CONCLUIDO'), 0) tar,
+                   NVL((SELECT SUM(a.pontos_aula) FROM aula a JOIN modulo m ON a.modulo_id_modulo = m.id_modulo JOIN trilha tr ON m.trilha_id_trilha = tr.id_trilha WHERE tr.pet_id_pet = p.id_pet AND a.concluida = 1), 0) aul
+              FROM pet p JOIN usuario_pet up ON p.id_pet = up.pet_id_pet
+             WHERE up.usuario_id_usuario = p_id_usuario
+        )
+        SELECT NVL(SUM(tar), 0), NVL(SUM(aul), 0),
+               NVL(JSON_ARRAYAGG(
+                   JSON_OBJECT(
+                       'petId'         VALUE id_pet,
+                       'nomePet'       VALUE nome,
+                       'pontosTarefas' VALUE tar,
+                       'pontosAulas'   VALUE aul,
+                       'pontosTotais'  VALUE (tar + aul)
+                   ) ORDER BY id_pet RETURNING CLOB
+               ), '[]')
+          INTO p_pontos_tarefas, p_pontos_aulas, p_detalhe_pets_json
+          FROM pet_pontos;
 
         p_pontos_totais := p_pontos_tarefas + p_pontos_aulas;
     EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20022, 'Usuário com id ' || p_id_usuario || ' não foi encontrado.');
         WHEN e_id_invalido OR e_usuario_inexistente THEN
             RAISE;
         WHEN OTHERS THEN
@@ -220,6 +216,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
         v_existe        NUMBER;
         v_total_tarefas NUMBER;
         v_total_aulas   NUMBER;
+        v_json_pets     CLOB;
     BEGIN
         IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
             RAISE_APPLICATION_ERROR(-20018, 'ID do usuário fornecido é nulo ou inválido.');
@@ -261,7 +258,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
          );
 
         -- Pontuação acumulada total somada (tarefas concluídas + aulas finalizadas)
-        pr_calcular_pontuacao_usuario(p_id_usuario, v_total_tarefas, v_total_aulas, p_pontos_acumulados);
+        pr_calcular_pontuacao_usuario(p_id_usuario, v_total_tarefas, v_total_aulas, p_pontos_acumulados, v_json_pets);
     EXCEPTION
         WHEN e_id_invalido OR e_usuario_inexistente THEN
             RAISE;
@@ -273,15 +270,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_petguardian AS
     FUNCTION fn_obter_nivel_usuario (
         p_id_usuario IN NUMBER
     ) RETURN VARCHAR2 IS
-        v_tar NUMBER;
-        v_aul NUMBER;
-        v_tot NUMBER;
+        v_tar       NUMBER;
+        v_aul       NUMBER;
+        v_tot       NUMBER;
+        v_json_pets CLOB;
     BEGIN
         IF p_id_usuario IS NULL OR p_id_usuario <= 0 THEN
             RAISE_APPLICATION_ERROR(-20018, 'ID do usuário fornecido é nulo ou inválido.');
         END IF;
 
-        pr_calcular_pontuacao_usuario(p_id_usuario, v_tar, v_aul, v_tot);
+        pr_calcular_pontuacao_usuario(p_id_usuario, v_tar, v_aul, v_tot, v_json_pets);
 
         IF v_tot <= 50 THEN
             RETURN 'BRONZE';
@@ -456,13 +454,15 @@ END;
 
 -- 2. Teste de Pontuação Agregada e Nível do Tutor (Carlos Silva - ID 1)
 DECLARE
-    v_tar_usr NUMBER;
-    v_aul_usr NUMBER;
-    v_tot_usr NUMBER;
+    v_tar_usr  NUMBER;
+    v_aul_usr  NUMBER;
+    v_tot_usr  NUMBER;
+    v_json_usr CLOB;
 BEGIN
     DBMS_OUTPUT.PUT_LINE('=== TESTE 2: pr_calcular_pontuacao_usuario e fn_obter_nivel_usuario ===');
-    pkg_petguardian.pr_calcular_pontuacao_usuario(1, v_tar_usr, v_aul_usr, v_tot_usr);
+    pkg_petguardian.pr_calcular_pontuacao_usuario(1, v_tar_usr, v_aul_usr, v_tot_usr, v_json_usr);
     DBMS_OUTPUT.PUT_LINE('Carlos Silva (ID 1) -> Tarefas: ' || v_tar_usr || ' | Aulas: ' || v_aul_usr || ' | Total: ' || v_tot_usr);
+    DBMS_OUTPUT.PUT_LINE('Detalhe JSON dos pets: ' || v_json_usr);
     DBMS_OUTPUT.PUT_LINE('Nível de Gamificação do Tutor (FUNCTION): ' || pkg_petguardian.fn_obter_nivel_usuario(1));
 END;
 /

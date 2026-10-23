@@ -82,8 +82,8 @@ A package centraliza todas as regras de negócio analíticas, gamificadas e tran
   Calcula a pontuação consolidada do **Pet individual**, somando as tarefas concluídas (via join com `status` onde `nome_status = 'CONCLUIDO'`) e as aulas finalizadas das suas trilhas e módulos. Os co-cuidadores compartilham o mesmo total de pontos do animal.  
   *Consumo Java/App:* `GET /pets/{id}/pontuacao`
 * **`pr_calcular_pontuacao_usuario` (Procedure):**  
-  Calcula a pontuação agregada de todos os pets sob tutela do usuário através de `USUARIO_PET`. Utilizada como métrica de engajamento do cuidador.  
-  *Consumo Java/App:* `GET /pets/pontuacao/me`
+  Calcula a pontuação agregada de todos os pets sob tutela do usuário através de `USUARIO_PET` e retorna, em lote único sem consultas N+1, o detalhamento individual de cada pet serializado em JSON nativo Oracle 19c (`JSON_ARRAYAGG` + `JSON_OBJECT` via `p_detalhe_pets_json OUT CLOB`).  
+  *Consumo Java/App:* `GET /pets/me/pontos`
 * **`pr_obter_resumo_rede_cuidado` (Procedure):**  
   Gera o relatório consolidado da rede de cuidado do usuário em uma única chamada: total de pets, total de cuidadores, tarefas pendentes, tarefas concluídas e pontos acumulados.  
   *Consumo Java/App:* `GET /usuarios/me/rede-cuidado`
@@ -243,6 +243,7 @@ Thor (ID 1) -> Tarefas: 5 | Aulas: 120 | Total: 125
 
 === TESTE 2: pr_calcular_pontuacao_usuario e fn_obter_nivel_usuario ===
 Carlos Silva (ID 1) -> Tarefas: 13 | Aulas: 120 | Total: 133
+Detalhe JSON dos pets: [{"petId":1,"nomePet":"Thor","pontosTarefas":5,"pontosAulas":120,"pontosTotais":125},{"petId":2,"nomePet":"Mel","pontosTarefas":8,"pontosAulas":0,"pontosTotais":8}]
 Nível de Gamificação do Tutor (FUNCTION): PRATA
 
 === TESTE 3: pr_obter_resumo_rede_cuidado (Carlos Silva ID 1) ===

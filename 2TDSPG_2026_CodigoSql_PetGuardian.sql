@@ -30,7 +30,7 @@ BEGIN
     END LOOP;
 
     -- Drop seguro do pacote PKG_PETGUARDIAN
-    FOR p IN (SELECT object_name, object_type FROM user_objects WHERE object_name = 'PKG_PETGUARDIAN' AND object_type IN ('PACKAGE', 'PACKAGE BODY')) LOOP
+    FOR p IN (SELECT object_name, object_type FROM user_objects WHERE object_name = 'PKG_PETGUARDIAN' AND object_type = 'PACKAGE') LOOP
         BEGIN
             EXECUTE IMMEDIATE 'DROP ' || p.object_type || ' ' || p.object_name;
             DBMS_OUTPUT.PUT_LINE('Objeto removido: ' || p.object_type || ' ' || p.object_name);
