@@ -27,7 +27,7 @@
   * **Dataset Educacional NoSQL (Markdown Rico):** [`conteudos_dataset.json`](./mongodb/conteudos_dataset.json)
   * **Script NoSQL — Coleção `aulas`:** [`setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js)
   * **Script NoSQL — Coleção `conteudos_aula`:** [`setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js)
-* **Vídeo Demonstrativo da Execução (YouTube):** *[Link do YouTube a ser anexado]*
+* **Vídeo Demonstrativo da Execução (YouTube):** [Assistir no YouTube](https://www.youtube.com/watch?v=rt8Ic9Sq9fI)
 
 ---
 
@@ -39,7 +39,7 @@
 | **2. Empacotamento de Processos (Packages)** | Procedimentos, funções e trigger personalizada (`TRG_AUDIT_TAREFA`) integrados no pacote PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções padronizadas. | 25 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
 | **3. Exportação do Dataset JSON** | Procedimento em pacote PL/SQL (`pr_exportar_aulas_json`) e dataset estruturado em JSON exportado a partir de dados reais de `AULA`. | 20 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) e [`mongodb/aulas_dataset.json`](./mongodb/aulas_dataset.json) | Concluído |
 | **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleções (`aulas` e `conteudos_aula`), validação de schema (`$jsonSchema`), índices e ingestão dos datasets. | 25 pts | [`mongodb/setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js) e [`mongodb/setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js) | Concluído |
-| **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | Link no README (YouTube) | Em gravação |
+| **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | [Vídeo no YouTube](https://www.youtube.com/watch?v=rt8Ic9Sq9fI) | Concluído |
 
 ---
 
