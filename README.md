@@ -27,7 +27,7 @@
   * **Dataset Educacional NoSQL (Markdown Rico):** [`conteudos_dataset.json`](./mongodb/conteudos_dataset.json)
   * **Script NoSQL — Coleção `aulas`:** [`setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js)
   * **Script NoSQL — Coleção `conteudos_aula`:** [`setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js)
-* **Vídeo Demonstrativo da Execução (YouTube):** [Assistir no YouTube](https://www.youtube.com/watch?v=rt8Ic9Sq9fI)
+* **Vídeo Demonstrativo da Execução (YouTube):** [Assistir no YouTube](https://www.youtube.com/watch?v=q1vGAhyaioU)
 
 ---
 
