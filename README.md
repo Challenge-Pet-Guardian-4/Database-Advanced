@@ -44,7 +44,7 @@
 | **2. Empacotamento de Processos (Packages)** | Procedimentos, funções e trigger personalizada (`TRG_AUDIT_TAREFA`) integrados no pacote PL/SQL (`PKG_PETGUARDIAN`), com controle de transação e tratamento de exceções padronizadas. | 25 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) | Concluído |
 | **3. Exportação do Dataset JSON** | Procedimento em pacote PL/SQL (`pr_exportar_aulas_json`) e dataset estruturado em JSON exportado a partir de dados reais de `AULA`. | 20 pts | [`sprint4_pkg_petguardian.sql`](./sprint4_pkg_petguardian.sql) e [`mongodb/aulas_dataset.json`](./mongodb/aulas_dataset.json) | Concluído |
 | **4. Estrutura e Carga no MongoDB** | Código MongoDB com criação de coleções (`aulas` e `conteudos_aula`), validação de schema (`$jsonSchema`), índices e ingestão dos datasets. | 25 pts | [`mongodb/setup_mongodb_aulas.js`](./mongodb/setup_mongodb_aulas.js) e [`mongodb/setup_mongodb_conteudos.js`](./mongodb/setup_mongodb_conteudos.js) | Concluído |
-| **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | [Video Database - Challenge Pet Guardian Sprint 4](https://www.youtube.com/watch?v=rt8Ic9Sq9fI) | Concluído |
+| **5. Vídeo Demonstrativo** | Vídeo explicando o funcionamento das packages e a estrutura do MongoDB. | 10 pts | [Video Database - Challenge Pet Guardian Sprint 4](https://www.youtube.com/watch?v=q1vGAhyaioU) | Concluído |
 
 ---
 
@@ -85,7 +85,7 @@ A package centraliza todas as regras de negócio analíticas, gamificadas e tran
 ### Seção 1: Pontuação Gamificada de Pets e Usuários
 * **`pr_calcular_pontuacao_pet` (Procedure):**  
   Calcula a pontuação consolidada do **Pet individual**, somando as tarefas concluídas (via join com `status` onde `nome_status = 'CONCLUIDO'`) e as aulas finalizadas das suas trilhas e módulos. Os co-cuidadores compartilham o mesmo total de pontos do animal.  
-  *Consumo Java/App:* `GET /pets/{id}/pontuacao`
+  *Consumo Java/App:* `GET /pets/{id}/pontos`
 * **`pr_calcular_pontuacao_usuario` (Procedure):**  
   Calcula a pontuação agregada de todos os pets sob tutela do usuário através de `USUARIO_PET` e retorna, em lote único sem consultas N+1, o detalhamento individual de cada pet serializado em JSON nativo Oracle 19c (`JSON_ARRAYAGG` + `JSON_OBJECT` via `p_detalhe_pets_json OUT CLOB`).  
   *Consumo Java/App:* `GET /pets/me/pontos`
@@ -141,7 +141,7 @@ Originada da exportação direta da tabela `AULA` do Oracle 19c (`PKG_PETGUARDIA
   "nome": "Introdução ao Clicker",
   "descricao": "Fundamentos de marcação positiva",
   "pontos_aula": 50,
-  "dificuldade": "INICIANTE",
+  "dificuldade": "FACIL",
   "concluida": 1,
   "modulo_id_modulo": 1
 }
